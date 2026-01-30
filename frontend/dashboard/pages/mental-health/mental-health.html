@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="mental-health.css">
+</head>
+
+<body data-page="mental-health">
+
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+    <script src="../../load-sidebar.js"></script>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>🧠 Mental Health & Emotional Well-Being</h1>
+                <p class="subtitle">Track your mental wellness journey with AI-powered insights</p>
+                <div class="disclaimer-badge">
+                    <span class="disclaimer-icon">ℹ️</span>
+                    <span>For awareness only - not medical diagnosis or therapy</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-secondary" onclick="viewHistory()">📊 View History</button>
+            </div>
+        </div>
+
+        <!-- WELLNESS SCORE OVERVIEW -->
+        <div class="wellness-overview">
+            <div class="card wellness-score-card">
+                <div class="score-container">
+                    <div class="score-circle">
+                        <svg class="score-svg" viewBox="0 0 200 200">
+                            <circle class="score-bg" cx="100" cy="100" r="85"></circle>
+                            <circle class="score-progress" cx="100" cy="100" r="85" id="scoreCircle"></circle>
+                        </svg>
+                        <div class="score-content">
+                            <div class="score-value" id="wellnessScore">--</div>
+                            <div class="score-label" id="wellnessStatus">Calculating...</div>
+                        </div>
+                    </div>
+                    <h3>Mental Wellness Score</h3>
+                    <p class="score-description">Based on mood, sleep, stress, and consistency</p>
+                </div>
+            </div>
+
+            <div class="card quick-stats">
+                <h3>This Week</h3>
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <span class="stat-icon">😊</span>
+                        <div class="stat-details">
+                            <span class="stat-label">Average Mood</span>
+                            <span class="stat-value" id="avgMood">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⚡</span>
+                        <div class="stat-details">
+                            <span class="stat-label">Energy Level</span>
+                            <span class="stat-value" id="avgEnergy">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">😴</span>
+                        <div class="stat-details">
+                            <span class="stat-label">Sleep Quality</span>
+                            <span class="stat-value" id="avgSleep">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">📈</span>
+                        <div class="stat-details">
+                            <span class="stat-label">Check-ins</span>
+                            <span class="stat-value" id="checkInCount">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOOD CHECK-IN -->
+        <div class="card check-in-card">
+            <div class="card-header">
+                <h2>📝 Daily Mood Check-In</h2>
+                <p>Takes only 30 seconds • Track your emotional well-being</p>
+            </div>
+
+            <div class="check-in-form">
+                <!-- Question 1: How do you feel today? -->
+                <div class="question-group">
+                    <label class="question-label">How do you feel today?</label>
+                    <div class="mood-options">
+                        <button class="mood-btn" data-mood="happy" onclick="selectMood('happy')">
+                            <span class="mood-emoji">😊</span>
+                            <span class="mood-text">Happy</span>
+                        </button>
+                        <button class="mood-btn" data-mood="stressed" onclick="selectMood('stressed')">
+                            <span class="mood-emoji">😰</span>
+                            <span class="mood-text">Stressed</span>
+                        </button>
+                        <button class="mood-btn" data-mood="anxious" onclick="selectMood('anxious')">
+                            <span class="mood-emoji">😟</span>
+                            <span class="mood-text">Anxious</span>
+                        </button>
+                        <button class="mood-btn" data-mood="low" onclick="selectMood('low')">
+                            <span class="mood-emoji">😔</span>
+                            <span class="mood-text">Low</span>
+                        </button>
+                        <button class="mood-btn" data-mood="calm" onclick="selectMood('calm')">
+                            <span class="mood-emoji">😌</span>
+                            <span class="mood-text">Calm</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 2: Energy Level -->
+                <div class="question-group">
+                    <label class="question-label">Energy Level</label>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="10" value="5" class="energy-slider" id="energySlider" oninput="updateSliderValue('energy', this.value)">
+                        <div class="slider-labels">
+                            <span>Low</span>
+                            <span class="slider-value" id="energyValue">5</span>
+                            <span>High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3: Sleep Quality -->
+                <div class="question-group">
+                    <label class="question-label">Sleep Quality (Last Night)</label>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="10" value="5" class="sleep-slider" id="sleepSlider" oninput="updateSliderValue('sleep', this.value)">
+                        <div class="slider-labels">
+                            <span>Poor</span>
+                            <span class="slider-value" id="sleepValue">5</span>
+                            <span>Excellent</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4: Stress Triggers -->
+                <div class="question-group">
+                    <label class="question-label">Any stress triggers today? (Optional)</label>
+                    <div class="trigger-options">
+                        <button class="trigger-btn" onclick="toggleTrigger(this, 'work')">💼 Work</button>
+                        <button class="trigger-btn" onclick="toggleTrigger(this, 'relationships')">❤️ Relationships</button>
+                        <button class="trigger-btn" onclick="toggleTrigger(this, 'health')">🏥 Health</button>
+                        <button class="trigger-btn" onclick="toggleTrigger(this, 'finances')">💰 Finances</button>
+                        <button class="trigger-btn" onclick="toggleTrigger(this, 'other')">📌 Other</button>
+                    </div>
+                </div>
+
+                <button class="btn-submit" onclick="submitCheckIn()">
+                    <span>Submit Check-In</span>
+                    <span class="submit-icon">✓</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- AI COMPANION & SUGGESTIONS -->
+        <div class="two-column-layout">
+            <!-- AI Companion -->
+            <div class="card ai-companion-card">
+                <div class="card-header">
+                    <h2>🧠 AI Mental Health Companion</h2>
+                    <p>Personalized insights based on your patterns</p>
+                </div>
+                <div class="ai-insights" id="aiInsights">
+                    <div class="insight-item">
+                        <div class="insight-icon">💡</div>
+                        <div class="insight-content">
+                            <h4>Pattern Detected</h4>
+                            <p>Your stress levels seem higher this week. Short breaks and consistent sleep may help.</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-icon">🎯</div>
+                        <div class="insight-content">
+                            <h4>Recommendation</h4>
+                            <p>You've been consistent with check-ins! Keep tracking to identify more patterns.</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-icon">⚠️</div>
+                        <div class="insight-content">
+                            <h4>Burnout Awareness</h4>
+                            <p>Low energy for 3+ days may indicate burnout. Consider taking a mental health day.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guided Suggestions -->
+            <div class="card suggestions-card">
+                <div class="card-header">
+                    <h2>🧘 Guided Suggestions</h2>
+                    <p>Quick activities to improve your well-being</p>
+                </div>
+                <div class="suggestions-list">
+                    <button class="suggestion-item" onclick="startActivity('breathing')">
+                        <div class="suggestion-icon">🌬️</div>
+                        <div class="suggestion-content">
+                            <h4>Breathing Exercise</h4>
+                            <p>5-minute guided breathing</p>
+                        </div>
+                        <span class="suggestion-arrow">→</span>
+                    </button>
+                    <button class="suggestion-item" onclick="startActivity('focus')">
+                        <div class="suggestion-icon">🎯</div>
+                        <div class="suggestion-content">
+                            <h4>Focus Tips</h4>
+                            <p>Improve concentration</p>
+                        </div>
+                        <span class="suggestion-arrow">→</span>
+                    </button>
+                    <button class="suggestion-item" onclick="startActivity('sleep')">
+                        <div class="suggestion-icon">😴</div>
+                        <div class="suggestion-content">
+                            <h4>Sleep Improvement</h4>
+                            <p>Better rest habits</p>
+                        </div>
+                        <span class="suggestion-arrow">→</span>
+                    </button>
+                    <button class="suggestion-item" onclick="startActivity('detox')">
+                        <div class="suggestion-icon">📱</div>
+                        <div class="suggestion-content">
+                            <h4>Digital Detox</h4>
+                            <p>Reduce screen time</p>
+                        </div>
+                        <span class="suggestion-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOOD HISTORY CHART -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <h2>📈 Mood & Energy Trends</h2>
+                <p>Your emotional patterns over time</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="moodChart"></canvas>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="../../load-sidebar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="mental-health.js"></script>
+</body>
+</html>

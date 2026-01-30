@@ -1,0 +1,100 @@
+/* ================= ANIMATED LOGO STYLES ================= */
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-container:hover {
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+/* Animated Logo SVG */
+.vital-x-logo {
+    width: 100px;
+    height: 40px;
+    filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.5));
+}
+
+/* Pulse animation for the heartbeat line */
+@keyframes heartbeat-pulse {
+
+    0%,
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+
+    50% {
+        stroke-dashoffset: 100;
+        opacity: 0.6;
+    }
+}
+
+.pulse-line {
+    stroke-dasharray: 200;
+    animation: heartbeat-pulse 2s ease-in-out infinite;
+}
+
+/* Glow animation for the X */
+@keyframes logo-glow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 15px rgba(45, 212, 191, 0.8));
+    }
+}
+
+.vital-x-logo {
+    animation: logo-glow 3s ease-in-out infinite;
+}
+
+/* Rib cage pulse */
+@keyframes rib-pulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.rib-cage {
+    animation: rib-pulse 2s ease-in-out infinite;
+}
+
+/* Logo text */
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2dd4bf, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .vital-x-logo {
+        width: 80px;
+        height: 35px;
+    }
+
+    .logo-text {
+        font-size: 20px;
+    }
+}

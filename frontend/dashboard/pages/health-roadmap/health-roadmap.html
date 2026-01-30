@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Health Roadmap | Vital-X</title>
+    <meta name="description"
+        content="Your step-by-step guide to achieving optimal health - like Google Maps for your wellness journey">
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="health-roadmap.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="../..//backend/config/firebase-config.js"></script>
+    <script src="../..//backend/services/auth-service.js"></script>
+    <script src="../..//backend/services/user-service.js"></script>
+    <script src="../..//backend/services/health-data-service.js"></script>
+</head>
+
+<body data-page="health-roadmap">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="dashboard-header">
+                <div>
+                    <h1>🗺️ Personalized Health Roadmap</h1>
+                    <p>Your step-by-step guide to optimal health</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-regenerate" onclick="regenerateRoadmap()">
+                        <span>🔄</span>
+                        <span>Regenerate</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- JOURNEY OVERVIEW -->
+            <div class="journey-overview-grid">
+                <div class="card journey-card current-state">
+                    <div class="journey-marker">📍</div>
+                    <div class="journey-content">
+                        <h3>Current State</h3>
+                        <div class="state-value">Good Health</div>
+                        <p class="state-details">Health Debt: 18 pts • Risk: Low (25%)</p>
+                    </div>
+                </div>
+
+                <div class="card journey-card journey-path">
+                    <div class="path-visual">
+                        <div class="path-line"></div>
+                        <div class="path-dots">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                    <div class="journey-info">
+                        <h4>12-Week Journey</h4>
+                        <p>6 actionable steps</p>
+                    </div>
+                </div>
+
+                <div class="card journey-card goal-state">
+                    <div class="journey-marker">🎯</div>
+                    <div class="journey-content">
+                        <h3>Goal State</h3>
+                        <div class="state-value">Optimal Health</div>
+                        <p class="state-details">Health Debt: <5 pts • Risk: Very Low (<10%)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROADMAP STEPS -->
+            <div class="roadmap-container">
+                <h2>Your Personalized Action Plan</h2>
+                <p class="roadmap-subtitle">Follow these steps in order for best results. Each step builds on the
+                    previous one.</p>
+
+                <!-- Step 1 -->
+                <div class="card roadmap-step">
+                    <div class="step-header">
+                        <div class="step-number">Week 1-2</div>
+                        <div class="step-title-section">
+                            <h3>🌙 Optimize Sleep Schedule</h3>
+                            <div class="step-tags">
+                                <span class="tag priority-high">High Priority</span>
+                                <span class="tag effort-low">Low Effort</span>
+                            </div>
+                        </div>
+                        <button class="step-toggle" onclick="toggleStep(this)">
+                            <span>▼</span>
+                        </button>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="step-section">
+                            <h4>🎯 Why This Matters</h4>
+                            <p>Sleep is the foundation of health. Improving your sleep will reduce your Health Debt by
+                                40% and significantly improve energy, focus, and mood.</p>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>📊 Expected Impact</h4>
+                            <div class="impact-grid">
+                                <div class="impact-item">
+                                    <span class="impact-label">Health Debt Reduction</span>
+                                    <span class="impact-value good">-7 points</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Risk Reduction</span>
+                                    <span class="impact-value good">-8%</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Energy Boost</span>
+                                    <span class="impact-value good">+35%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>✅ Action Items</h4>
+                            <div class="action-list">
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Set a consistent bedtime (10:30 PM)</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Wake up at the same time daily (6:30 AM)</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>No screens 1 hour before bed</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Create a relaxing bedtime routine</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>💡 Tips for Success</h4>
+                            <ul class="tips-list">
+                                <li>Use a sleep tracking app to monitor progress</li>
+                                <li>Keep your bedroom cool (65-68°F)</li>
+                                <li>Avoid caffeine after 2 PM</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">0% Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="card roadmap-step">
+                    <div class="step-header">
+                        <div class="step-number">Week 3-4</div>
+                        <div class="step-title-section">
+                            <h3>🥗 Improve Diet Quality</h3>
+                            <div class="step-tags">
+                                <span class="tag priority-high">High Priority</span>
+                                <span class="tag effort-medium">Medium Effort</span>
+                            </div>
+                        </div>
+                        <button class="step-toggle" onclick="toggleStep(this)">
+                            <span>▼</span>
+                        </button>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="step-section">
+                            <h4>🎯 Why This Matters</h4>
+                            <p>Nutrition directly impacts energy, immunity, and long-term health. A balanced diet will
+                                reduce inflammation and support all body systems.</p>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>📊 Expected Impact</h4>
+                            <div class="impact-grid">
+                                <div class="impact-item">
+                                    <span class="impact-label">Health Debt Reduction</span>
+                                    <span class="impact-value good">-5 points</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Energy Levels</span>
+                                    <span class="impact-value good">+25%</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Immunity</span>
+                                    <span class="impact-value good">+30%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>✅ Action Items</h4>
+                            <div class="action-list">
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Eat 5 servings of fruits/vegetables daily</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Drink 8 glasses of water per day</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Reduce processed foods by 50%</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Plan meals for the week ahead</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>💡 Tips for Success</h4>
+                            <ul class="tips-list">
+                                <li>Prep meals on Sunday for the week</li>
+                                <li>Keep healthy snacks readily available</li>
+                                <li>Use the Calorie Calculator for guidance</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">0% Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="card roadmap-step">
+                    <div class="step-header">
+                        <div class="step-number">Week 5-6</div>
+                        <div class="step-title-section">
+                            <h3>🧘 Reduce Stress Levels</h3>
+                            <div class="step-tags">
+                                <span class="tag priority-medium">Medium Priority</span>
+                                <span class="tag effort-low">Low Effort</span>
+                            </div>
+                        </div>
+                        <button class="step-toggle" onclick="toggleStep(this)">
+                            <span>▼</span>
+                        </button>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="step-section">
+                            <h4>🎯 Why This Matters</h4>
+                            <p>Chronic stress increases health risks across all systems. Managing stress improves mental
+                                clarity, sleep quality, and overall wellbeing.</p>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>📊 Expected Impact</h4>
+                            <div class="impact-grid">
+                                <div class="impact-item">
+                                    <span class="impact-label">Health Debt Reduction</span>
+                                    <span class="impact-value good">-3 points</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Mental Clarity</span>
+                                    <span class="impact-value good">+40%</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Sleep Quality</span>
+                                    <span class="impact-value good">+20%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>✅ Action Items</h4>
+                            <div class="action-list">
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Practice 10 minutes of meditation daily</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Use the 4-7-8 breathing technique</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Take regular breaks during work</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Journal for 5 minutes before bed</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>💡 Tips for Success</h4>
+                            <ul class="tips-list">
+                                <li>Use the Breathing Exercise feature on Dashboard</li>
+                                <li>Set reminders for meditation breaks</li>
+                                <li>Try yoga or gentle stretching</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">0% Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="card roadmap-step">
+                    <div class="step-header">
+                        <div class="step-number">Week 7-8</div>
+                        <div class="step-title-section">
+                            <h3>🏃 Establish Exercise Routine</h3>
+                            <div class="step-tags">
+                                <span class="tag priority-high">High Priority</span>
+                                <span class="tag effort-high">High Effort</span>
+                            </div>
+                        </div>
+                        <button class="step-toggle" onclick="toggleStep(this)">
+                            <span>▼</span>
+                        </button>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="step-section">
+                            <h4>🎯 Why This Matters</h4>
+                            <p>Regular physical activity strengthens your cardiovascular system, improves mood, and
+                                reduces disease risk by up to 50%.</p>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>📊 Expected Impact</h4>
+                            <div class="impact-grid">
+                                <div class="impact-item">
+                                    <span class="impact-label">Health Debt Reduction</span>
+                                    <span class="impact-value good">-4 points</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Cardiovascular Health</span>
+                                    <span class="impact-value good">+45%</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Mood</span>
+                                    <span class="impact-value good">+35%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>✅ Action Items</h4>
+                            <div class="action-list">
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>30 minutes of cardio, 5 days/week</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Strength training 2 days/week</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Take 10,000 steps daily</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Stretch for 10 minutes after workouts</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>💡 Tips for Success</h4>
+                            <ul class="tips-list">
+                                <li>Start small - even 10 minutes counts</li>
+                                <li>Find activities you enjoy</li>
+                                <li>Work out with a friend for accountability</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">0% Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="card roadmap-step">
+                    <div class="step-header">
+                        <div class="step-number">Week 9-10</div>
+                        <div class="step-title-section">
+                            <h3>💧 Optimize Hydration</h3>
+                            <div class="step-tags">
+                                <span class="tag priority-medium">Medium Priority</span>
+                                <span class="tag effort-low">Low Effort</span>
+                            </div>
+                        </div>
+                        <button class="step-toggle" onclick="toggleStep(this)">
+                            <span>▼</span>
+                        </button>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="step-section">
+                            <h4>🎯 Why This Matters</h4>
+                            <p>Proper hydration supports every bodily function, improves skin health, aids digestion,
+                                and boosts energy levels.</p>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>📊 Expected Impact</h4>
+                            <div class="impact-grid">
+                                <div class="impact-item">
+                                    <span class="impact-label">Health Debt Reduction</span>
+                                    <span class="impact-value good">-2 points</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Energy</span>
+                                    <span class="impact-value good">+20%</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Skin Health</span>
+                                    <span class="impact-value good">+25%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>✅ Action Items</h4>
+                            <div class="action-list">
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Drink 8 glasses (2L) of water daily</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Start each day with a glass of water</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Carry a reusable water bottle</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Track water intake on Dashboard</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>💡 Tips for Success</h4>
+                            <ul class="tips-list">
+                                <li>Set hourly reminders to drink water</li>
+                                <li>Add lemon or cucumber for flavor</li>
+                                <li>Drink a glass before each meal</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">0% Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="card roadmap-step">
+                    <div class="step-header">
+                        <div class="step-number">Week 11-12</div>
+                        <div class="step-title-section">
+                            <h3>🎯 Maintain & Optimize</h3>
+                            <div class="step-tags">
+                                <span class="tag priority-high">High Priority</span>
+                                <span class="tag effort-medium">Medium Effort</span>
+                            </div>
+                        </div>
+                        <button class="step-toggle" onclick="toggleStep(this)">
+                            <span>▼</span>
+                        </button>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="step-section">
+                            <h4>🎯 Why This Matters</h4>
+                            <p>Consistency is key. This phase focuses on making all previous habits automatic and
+                                identifying areas for further optimization.</p>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>📊 Expected Impact</h4>
+                            <div class="impact-grid">
+                                <div class="impact-item">
+                                    <span class="impact-label">Health Debt</span>
+                                    <span class="impact-value excellent">
+                                        <5 points</span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Overall Risk</span>
+                                    <span class="impact-value excellent">
+                                        <10%< /span>
+                                </div>
+                                <div class="impact-item">
+                                    <span class="impact-label">Lifestyle Score</span>
+                                    <span class="impact-value excellent">95+</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>✅ Action Items</h4>
+                            <div class="action-list">
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Review progress on all 5 previous steps</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Take AI-Diagnosis assessment</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Set new health goals</span>
+                                </label>
+                                <label class="action-item">
+                                    <input type="checkbox">
+                                    <span>Celebrate your achievements!</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-section">
+                            <h4>💡 Tips for Success</h4>
+                            <ul class="tips-list">
+                                <li>Track your progress weekly</li>
+                                <li>Adjust habits based on what works for you</li>
+                                <li>Share your success with friends/family</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">0% Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- OVERALL PROGRESS -->
+            <div class="card overall-progress-card">
+                <h2>🏆 Overall Roadmap Progress</h2>
+                <div class="overall-progress-content">
+                    <div class="progress-circle">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                            <circle cx="50" cy="50" r="45" class="progress-ring" style="stroke-dashoffset: 283">
+                            </circle>
+                        </svg>
+                        <div class="progress-percentage">0%</div>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Steps Completed</span>
+                            <span class="stat-value">0 / 6</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Estimated Time Remaining</span>
+                            <span class="stat-value">12 weeks</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Projected Health Debt</span>
+                            <span class="stat-value excellent">
+                                <5 points</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../load-sidebar.js"></script>
+    <script src="../../dashboard.js"></script>
+    <script src="health-roadmap.js"></script>
+</body>
+
+</html>

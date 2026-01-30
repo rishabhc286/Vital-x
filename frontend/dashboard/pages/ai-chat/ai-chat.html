@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="ai-chat.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="../..//backend/config/firebase-config.js?v=5"></script>
+    <script src="../..//backend/services/auth-service.js?v=5"></script>
+    <script src="../..//backend/services/user-service.js?v=5"></script>
+    <script src="../..//backend/services/health-data-service.js?v=5"></script>
+    <script src="../..//backend/config/ai-config.js?v=5"></script>
+    <script src="../..//backend/services/ai-service.js?v=5"></script>
+</head>
+
+<body data-page="ai-chat">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1>🤖 AI Health Assistant</h1>
+                    <p class="subtitle">Get personalized health insights and answers to your health questions</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-clear" onclick="clearChat()">🗑️ Clear Chat</button>
+                </div>
+            </div>
+
+            <!-- CHAT CONTAINER -->
+            <div class="chat-container">
+                <!-- SIDEBAR - QUICK ACTIONS -->
+                <div class="chat-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="quick-action-btn"
+                                onclick="sendQuickMessage('What is my current health status?')">
+                                <span class="action-icon">📊</span>
+                                <span>Health Status</span>
+                            </button>
+                            <button class="quick-action-btn"
+                                onclick="sendQuickMessage('What are my health recommendations?')">
+                                <span class="action-icon">💡</span>
+                                <span>Recommendations</span>
+                            </button>
+                            <button class="quick-action-btn"
+                                onclick="sendQuickMessage('Explain my recent health metrics')">
+                                <span class="action-icon">📈</span>
+                                <span>Health Metrics</span>
+                            </button>
+                            <button class="quick-action-btn"
+                                onclick="sendQuickMessage('What should I do to improve my health?')">
+                                <span class="action-icon">🎯</span>
+                                <span>Health Tips</span>
+                            </button>
+                            <button class="quick-action-btn"
+                                onclick="sendQuickMessage('Are there any health concerns I should know about?')">
+                                <span class="action-icon">⚠️</span>
+                                <span>Health Concerns</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Health Summary</h3>
+                        <div class="health-summary">
+                            <div class="summary-item">
+                                <span class="summary-label">Health Score</span>
+                                <span class="summary-value">92</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Heart Rate</span>
+                                <span class="summary-value">72 bpm</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">SpO2</span>
+                                <span class="summary-value">98%</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Steps Today</span>
+                                <span class="summary-value">8,432</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHAT AREA -->
+                <div class="chat-main">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <div class="message-avatar">🤖</div>
+                            <div class="message-content">
+                                <div class="message-text">
+                                    Hello! I'm your AI Health Assistant. I can help you understand your health data,
+                                    provide recommendations, and answer questions about your wellness. How can I assist
+                                    you today?
+                                </div>
+                                <div class="message-time">Just now</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TYPING INDICATOR -->
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <div class="message ai-message">
+                            <div class="message-avatar">🤖</div>
+                            <div class="message-content">
+                                <div class="typing-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- INPUT AREA -->
+                    <div class="chat-input-container">
+                        <div class="input-wrapper">
+                            <input type="text" id="chatInput" class="chat-input"
+                                placeholder="Ask me anything about your health..." onkeypress="handleKeyPress(event)">
+                            <button class="btn-send" onclick="sendMessage()">
+                                <span>Send</span>
+                                <span class="send-icon">→</span>
+                            </button>
+                        </div>
+                        <div class="input-hints">
+                            <span class="hint">💡 Try: "What's my heart rate trend?" or "Explain my BMI"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../load-sidebar.js"></script>
+    <script src="ai-chat.js"></script>
+</body>
+
+</html>

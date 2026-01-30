@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="environment.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body data-page="environment">
+
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+    <script src="../../load-sidebar.js"></script>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>🌍 Environment</h1>
+                <p class="subtitle">Real-time weather, air quality, and environmental conditions</p>
+            </div>
+            <div class="header-controls">
+                <input type="text" id="locationInput" placeholder="Enter city name" class="location-input">
+                <button class="btn-location" onclick="updateLocation()">📍 Update Location</button>
+                <button class="btn-refresh" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <!-- CURRENT WEATHER CARD -->
+        <div class="weather-main-section">
+            <div class="card weather-main-card">
+                <div class="weather-header">
+                    <div>
+                        <h2 id="currentLocation">New York, NY</h2>
+                        <p id="currentDate" class="weather-date"></p>
+                    </div>
+                    <div class="weather-icon-large" id="weatherIcon">☀️</div>
+                </div>
+                <div class="temperature-display">
+                    <div class="temp-main">
+                        <span class="temp-value" id="currentTemp">72</span>
+                        <span class="temp-unit">°F</span>
+                    </div>
+                    <div class="temp-details">
+                        <div class="temp-item">
+                            <span class="temp-label">Feels Like</span>
+                            <span class="temp-value-small" id="feelsLike">75°F</span>
+                        </div>
+                        <div class="temp-item">
+                            <span class="temp-label">High / Low</span>
+                            <span class="temp-value-small" id="tempRange">78°F / 65°F</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="weather-description" id="weatherDescription">Sunny</div>
+            </div>
+        </div>
+
+        <!-- WEATHER METRICS GRID -->
+        <div class="weather-metrics-grid">
+            <div class="card metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">💧</span>
+                    <span class="metric-label">Humidity</span>
+                </div>
+                <div class="metric-value-large" id="humidity">65%</div>
+                <div class="metric-bar">
+                    <div class="metric-fill humidity" id="humidityBar" style="width: 65%"></div>
+                </div>
+            </div>
+
+            <div class="card metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">💨</span>
+                    <span class="metric-label">Wind Speed</span>
+                </div>
+                <div class="metric-value-large" id="windSpeed">12 mph</div>
+                <div class="wind-direction">
+                    <span class="wind-arrow" id="windArrow">→</span>
+                    <span id="windDir">NW</span>
+                </div>
+            </div>
+
+            <div class="card metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">📊</span>
+                    <span class="metric-label">Pressure</span>
+                </div>
+                <div class="metric-value-large" id="pressure">1013 hPa</div>
+                <div class="pressure-trend" id="pressureTrend">Stable</div>
+            </div>
+
+            <div class="card metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">☀️</span>
+                    <span class="metric-label">UV Index</span>
+                </div>
+                <div class="metric-value-large" id="uvIndex">6</div>
+                <div class="uv-level" id="uvLevel">Moderate</div>
+            </div>
+
+            <div class="card metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">🌅</span>
+                    <span class="metric-label">Sunrise</span>
+                </div>
+                <div class="metric-value-large" id="sunrise">6:24 AM</div>
+            </div>
+
+            <div class="card metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">🌇</span>
+                    <span class="metric-label">Sunset</span>
+                </div>
+                <div class="metric-value-large" id="sunset">7:45 PM</div>
+            </div>
+        </div>
+
+        <!-- AIR QUALITY SECTION -->
+        <div class="aqi-section">
+            <div class="card aqi-card">
+                <div class="card-header">
+                    <span class="card-icon">🌬️</span>
+                    <h3>Air Quality Index (AQI)</h3>
+                    <span class="aqi-badge" id="aqiBadge">Good</span>
+                </div>
+                <div class="aqi-main">
+                    <div class="aqi-value-display">
+                        <div class="aqi-number" id="aqiValue">45</div>
+                        <div class="aqi-label">AQI</div>
+                    </div>
+                    <div class="aqi-gauge">
+                        <div class="gauge-fill" id="aqiGauge"></div>
+                    </div>
+                </div>
+                <div class="aqi-breakdown">
+                    <div class="aqi-item">
+                        <span class="aqi-pollutant">PM2.5</span>
+                        <span class="aqi-value-small" id="pm25">12 µg/m³</span>
+                        <div class="aqi-status good">Good</div>
+                    </div>
+                    <div class="aqi-item">
+                        <span class="aqi-pollutant">PM10</span>
+                        <span class="aqi-value-small" id="pm10">18 µg/m³</span>
+                        <div class="aqi-status good">Good</div>
+                    </div>
+                    <div class="aqi-item">
+                        <span class="aqi-pollutant">O₃</span>
+                        <span class="aqi-value-small" id="ozone">85 ppb</span>
+                        <div class="aqi-status moderate">Moderate</div>
+                    </div>
+                    <div class="aqi-item">
+                        <span class="aqi-pollutant">NO₂</span>
+                        <span class="aqi-value-small" id="no2">25 ppb</span>
+                        <div class="aqi-status good">Good</div>
+                    </div>
+                    <div class="aqi-item">
+                        <span class="aqi-pollutant">CO</span>
+                        <span class="aqi-value-small" id="co">0.8 ppm</span>
+                        <div class="aqi-status good">Good</div>
+                    </div>
+                    <div class="aqi-item">
+                        <span class="aqi-pollutant">SO₂</span>
+                        <span class="aqi-value-small" id="so2">5 ppb</span>
+                        <div class="aqi-status good">Good</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEATHER FORECAST -->
+        <div class="forecast-section">
+            <div class="card forecast-card">
+                <div class="card-header">
+                    <span class="card-icon">📅</span>
+                    <h3>7-Day Forecast</h3>
+                </div>
+                <div class="forecast-list" id="forecastList">
+                    <!-- Forecast items will be generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- HOURLY FORECAST -->
+        <div class="hourly-section">
+            <div class="card hourly-card">
+                <div class="card-header">
+                    <span class="card-icon">⏰</span>
+                    <h3>24-Hour Forecast</h3>
+                </div>
+                <div class="hourly-chart-container">
+                    <canvas id="hourlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENVIRONMENTAL FACTORS -->
+        <div class="environmental-factors-grid">
+            <div class="card factor-card">
+                <div class="card-header">
+                    <span class="card-icon">🌺</span>
+                    <h3>Pollen Count</h3>
+                </div>
+                <div class="pollen-display">
+                    <div class="pollen-value" id="pollenCount">Low</div>
+                    <div class="pollen-breakdown">
+                        <div class="pollen-item">
+                            <span>Tree</span>
+                            <span class="pollen-level low">Low</span>
+                        </div>
+                        <div class="pollen-item">
+                            <span>Grass</span>
+                            <span class="pollen-level moderate">Moderate</span>
+                        </div>
+                        <div class="pollen-item">
+                            <span>Weed</span>
+                            <span class="pollen-level low">Low</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card factor-card">
+                <div class="card-header">
+                    <span class="card-icon">🌡️</span>
+                    <h3>Heat Index</h3>
+                </div>
+                <div class="heat-index-display">
+                    <div class="heat-value" id="heatIndex">78°F</div>
+                    <div class="heat-status" id="heatStatus">Comfortable</div>
+                </div>
+            </div>
+
+            <div class="card factor-card">
+                <div class="card-header">
+                    <span class="card-icon">🌊</span>
+                    <h3>Visibility</h3>
+                </div>
+                <div class="visibility-display">
+                    <div class="visibility-value" id="visibility">10 mi</div>
+                    <div class="visibility-status">Excellent</div>
+                </div>
+            </div>
+
+            <div class="card factor-card">
+                <div class="card-header">
+                    <span class="card-icon">🌧️</span>
+                    <h3>Precipitation</h3>
+                </div>
+                <div class="precipitation-display">
+                    <div class="precip-value" id="precipitation">0%</div>
+                    <div class="precip-chance">Chance of Rain</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENVIRONMENTAL ALERTS -->
+        <div class="alerts-section">
+            <div class="card alerts-card">
+                <div class="card-header">
+                    <span class="card-icon">⚠️</span>
+                    <h3>Environmental Alerts</h3>
+                </div>
+                <div class="alerts-list" id="alertsList">
+                    <div class="alert-item info">
+                        <div class="alert-icon-small">ℹ️</div>
+                        <div class="alert-content">
+                            <h4>UV Index Moderate</h4>
+                            <p>Wear sunscreen and protective clothing when outdoors</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEMPERATURE TREND CHART -->
+        <div class="chart-section">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <span class="card-icon">📈</span>
+                    <h3>Temperature Trend (24h)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="../../load-sidebar.js"></script>
+<script src="environment.js"></script>
+</body>
+</html>
+

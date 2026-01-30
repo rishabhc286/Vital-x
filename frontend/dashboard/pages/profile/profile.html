@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="profile.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="../../../../backend/config/firebase-config.js"></script>
+    <script src="../../../../backend/services/auth-service.js"></script>
+    <script src="../../../../backend/services/user-service.js"></script>
+    <script src="../../../../backend/utils/ui-helpers.js"></script>
+
+    <!-- UI Helper Styles -->
+    <link rel="stylesheet" href="../../../../backend/utils/ui-helpers.css">
+</head>
+
+<body data-page="profile">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1>👤 Profile</h1>
+                    <p class="subtitle">Manage your personal information and health settings</p>
+                </div>
+            </div>
+
+            <!-- PROFILE HEADER CARD -->
+            <div class="profile-header-section">
+                <div class="card profile-header-card">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar" id="profileAvatar">R</div>
+                        <button class="btn-avatar-edit" onclick="changeAvatar()">📷</button>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profileName">Rishabh</h2>
+                        <p class="profile-email" id="profileEmail">rishabh@example.com</p>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-value" id="memberSince">2024</span>
+                                <span class="stat-label">Member Since</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="healthScore">92</span>
+                                <span class="stat-label">Health Score</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="daysActive">127</span>
+                                <span class="stat-label">Days Active</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-edit-profile" onclick="editProfile()">✏️ Edit Profile</button>
+                </div>
+            </div>
+
+            <!-- PROFILE SECTIONS GRID -->
+            <div class="profile-sections-grid">
+                <!-- PERSONAL INFORMATION -->
+                <div class="card profile-section-card">
+                    <div class="card-header">
+                        <span class="card-icon">📋</span>
+                        <h3>Personal Information</h3>
+                        <button class="btn-edit" onclick="editPersonalInfo()">✏️ Edit</button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value" id="fullName">Rishabh</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Date of Birth</span>
+                            <span class="info-value" id="dateOfBirth">January 1, 1990</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Gender</span>
+                            <span class="info-value" id="gender">Male</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value" id="phone">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Address</span>
+                            <span class="info-value" id="address">123 Main St, City, State 12345</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HEALTH INFORMATION -->
+                <div class="card profile-section-card">
+                    <div class="card-header">
+                        <span class="card-icon">💓</span>
+                        <h3>Health Information</h3>
+                        <button class="btn-edit" onclick="editHealthInfo()">✏️ Edit</button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Height</span>
+                            <span class="info-value" id="height">175 cm</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Weight</span>
+                            <span class="info-value" id="weight">70 kg</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Blood Type</span>
+                            <span class="info-value" id="bloodType">O+</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">BMI</span>
+                            <span class="info-value" id="bmi">22.9</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Activity Level</span>
+                            <span class="info-value" id="activityLevel">Moderate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MEDICAL HISTORY -->
+                <div class="card profile-section-card">
+                    <div class="card-header">
+                        <span class="card-icon">🏥</span>
+                        <h3>Medical History</h3>
+                        <button class="btn-edit" onclick="editMedicalHistory()">✏️ Edit</button>
+                    </div>
+                    <div class="medical-history-content">
+                        <div class="history-item">
+                            <span class="history-label">Allergies</span>
+                            <span class="history-value" id="allergies">None known</span>
+                        </div>
+                        <div class="history-item">
+                            <span class="history-label">Current Medications</span>
+                            <span class="history-value" id="medications">None</span>
+                        </div>
+                        <div class="history-item">
+                            <span class="history-label">Chronic Conditions</span>
+                            <span class="history-value" id="conditions">None</span>
+                        </div>
+                        <div class="history-item">
+                            <span class="history-label">Previous Surgeries</span>
+                            <span class="history-value" id="surgeries">None</span>
+                        </div>
+                        <div class="history-item">
+                            <span class="history-label">Family History</span>
+                            <span class="history-value" id="familyHistory">No significant family history</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMERGENCY CONTACTS -->
+                <!-- <div class="card profile-section-card"> -->
+                    <div class="card-header">
+                        <span class="card-icon">🚨</span>
+                        <h3>Emergency Contacts</h3>
+                        <button class="btn-edit" onclick="editEmergencyContacts()">✏️ Edit</button>
+                    </div>
+                    <div class="emergency-contacts-list">
+                        <div class="emergency-contact-item">
+                            <div class="contact-avatar-small">JD</div>
+                            <div class="contact-details">
+                                <h4>John Doe</h4>
+                                <p>+1 (555) 123-4567</p>
+                                <span class="contact-relation">Primary Contact</span>
+                            </div>
+                        </div>
+                        <div class="emergency-contact-item">
+                            <div class="contact-avatar-small">JS</div>
+                            <div class="contact-details">
+                                <h4>Jane Smith</h4>
+                                <p>+1 (555) 987-6543</p>
+                                <span class="contact-relation">Secondary Contact</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACCOUNT SETTINGS -->
+                <div class="card profile-section-card">
+                    <div class="card-header">
+                        <span class="card-icon">⚙️</span>
+                        <h3>Account Settings</h3>
+                    </div>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Email Notifications</h4>
+                                <p>Receive email updates about your health</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>SMS Notifications</h4>
+                                <p>Receive SMS alerts for important updates</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="smsNotifications">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Health Monitoring</h4>
+                                <p>Enable automatic health monitoring</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="healthMonitoring" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Data Sharing</h4>
+                                <p>Share anonymized data for research</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dataSharing">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRIVACY & SECURITY -->
+                <div class="card profile-section-card">
+                    <div class="card-header">
+                        <span class="card-icon">🔒</span>
+                        <h3>Privacy & Security</h3>
+                    </div>
+                    <div class="security-actions">
+                        <button class="btn-security" onclick="changePassword()">
+                            <span class="btn-icon">🔑</span>
+                            <span>Change Password</span>
+                        </button>
+                        <button class="btn-security" onclick="enable2FA()">
+                            <span class="btn-icon">🛡️</span>
+                            <span>Two-Factor Authentication</span>
+                        </button>
+                        <button class="btn-security" onclick="downloadData()">
+                            <span class="btn-icon">📥</span>
+                            <span>Download My Data</span>
+                        </button>
+                        <button class="btn-security danger" onclick="deleteAccount()">
+                            <span class="btn-icon">🗑️</span>
+                            <span>Delete Account</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../load-sidebar.js"></script>
+    <script src="profile.js"></script>
+</body>
+
+</html>

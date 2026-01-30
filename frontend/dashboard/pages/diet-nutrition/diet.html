@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet & Nutrition | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="diet.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="../..//backend/config/firebase-config.js"></script>
+    <script src="../..//backend/services/auth-service.js"></script>
+    <script src="../..//backend/services/user-service.js"></script>
+    <script src="../..//backend/services/health-data-service.js"></script>
+</head>
+
+<body data-page="diet">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1>🥗 Diet & Nutrition</h1>
+                    <p class="subtitle">Track your meals, macros, and nutrition goals</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-log-meal" onclick="openMealLog()">➕ Log Meal</button>
+                </div>
+            </div>
+
+            <!-- NUTRITION SUMMARY -->
+            <div class="nutrition-summary-grid">
+                <div class="card summary-card calories">
+                    <div class="summary-icon">🔥</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Calories</span>
+                        <span class="summary-value" id="caloriesConsumed">0</span>
+                        <span class="summary-target">/ 2,000 kcal</span>
+                    </div>
+                    <div class="summary-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill calories" id="caloriesProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card summary-card protein">
+                    <div class="summary-icon">🍗</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Protein</span>
+                        <span class="summary-value" id="proteinConsumed">0g</span>
+                        <span class="summary-target">/ 150g</span>
+                    </div>
+                    <div class="summary-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill protein" id="proteinProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card summary-card carbs">
+                    <div class="summary-icon">🍞</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Carbs</span>
+                        <span class="summary-value" id="carbsConsumed">0g</span>
+                        <span class="summary-target">/ 250g</span>
+                    </div>
+                    <div class="summary-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill carbs" id="carbsProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card summary-card fats">
+                    <div class="summary-icon">🥑</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Fats</span>
+                        <span class="summary-value" id="fatsConsumed">0g</span>
+                        <span class="summary-target">/ 67g</span>
+                    </div>
+                    <div class="summary-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill fats" id="fatsProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card summary-card water">
+                    <div class="summary-icon">💧</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Water</span>
+                        <span class="summary-value" id="waterConsumed">0</span>
+                        <span class="summary-target">/ 8 glasses</span>
+                    </div>
+                    <div class="summary-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill water" id="waterProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT GRID -->
+            <div class="diet-grid">
+                <!-- MEAL LOG -->
+                <div class="card meal-log-card">
+                    <div class="card-header">
+                        <span class="card-icon">📝</span>
+                        <h3>Today's Meals</h3>
+                        <div class="meal-tabs">
+                            <button class="tab-btn active" onclick="switchMealTab('breakfast')">Breakfast</button>
+                            <button class="tab-btn" onclick="switchMealTab('lunch')">Lunch</button>
+                            <button class="tab-btn" onclick="switchMealTab('dinner')">Dinner</button>
+                            <button class="tab-btn" onclick="switchMealTab('snacks')">Snacks</button>
+                        </div>
+                    </div>
+                    <div class="meal-list" id="mealList">
+                        <!-- Meals will be generated by JS -->
+                        <div class="empty-state">
+                            <div class="empty-icon">🍽️</div>
+                            <p>No meals logged yet</p>
+                            <button class="btn-add-meal" onclick="openMealLog()">Add Your First Meal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MACRO BREAKDOWN -->
+                <div class="card macro-card">
+                    <div class="card-header">
+                        <span class="card-icon">📊</span>
+                        <h3>Macro Breakdown</h3>
+                    </div>
+                    <div class="macro-chart-container">
+                        <canvas id="macroChart"></canvas>
+                    </div>
+                    <div class="macro-stats">
+                        <div class="macro-stat-item">
+                            <span class="stat-label">Protein</span>
+                            <span class="stat-value" id="macroProtein">0%</span>
+                        </div>
+                        <div class="macro-stat-item">
+                            <span class="stat-label">Carbs</span>
+                            <span class="stat-value" id="macroCarbs">0%</span>
+                        </div>
+                        <div class="macro-stat-item">
+                            <span class="stat-label">Fats</span>
+                            <span class="stat-value" id="macroFats">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUICK ADD -->
+                <div class="card quick-add-card">
+                    <div class="card-header">
+                        <span class="card-icon">⚡</span>
+                        <h3>Quick Add</h3>
+                    </div>
+                    <div class="quick-add-options">
+                        <button class="quick-add-btn" onclick="quickAddWater()">
+                            <span class="quick-icon">💧</span>
+                            <span>Water</span>
+                        </button>
+                        <button class="quick-add-btn" onclick="quickAddFood('apple')">
+                            <span class="quick-icon">🍎</span>
+                            <span>Apple</span>
+                        </button>
+                        <button class="quick-add-btn" onclick="quickAddFood('banana')">
+                            <span class="quick-icon">🍌</span>
+                            <span>Banana</span>
+                        </button>
+                        <button class="quick-add-btn" onclick="quickAddFood('chicken')">
+                            <span class="quick-icon">🍗</span>
+                            <span>Chicken</span>
+                        </button>
+                        <button class="quick-add-btn" onclick="quickAddFood('rice')">
+                            <span class="quick-icon">🍚</span>
+                            <span>Rice</span>
+                        </button>
+                        <button class="quick-add-btn" onclick="openMealLog()">
+                            <span class="quick-icon">➕</span>
+                            <span>More</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- NUTRITION GOALS -->
+                <div class="card goals-card">
+                    <div class="card-header">
+                        <span class="card-icon">🎯</span>
+                        <h3>Nutrition Goals</h3>
+                        <button class="btn-edit" onclick="editGoals()">✏️ Edit</button>
+                    </div>
+                    <div class="goals-list">
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-label">Daily Calories</span>
+                                <span class="goal-value" id="goalCalories">2,000 kcal</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-label">Protein</span>
+                                <span class="goal-value" id="goalProtein">150g</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-label">Carbs</span>
+                                <span class="goal-value" id="goalCarbs">250g</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-label">Fats</span>
+                                <span class="goal-value" id="goalFats">67g</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-label">Water</span>
+                                <span class="goal-value" id="goalWater">8 glasses</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MEAL SUGGESTIONS -->
+                <div class="card suggestions-card">
+                    <div class="card-header">
+                        <span class="card-icon">💡</span>
+                        <h3>Meal Suggestions</h3>
+                    </div>
+                    <div class="suggestions-list" id="suggestionsList">
+                        <div class="suggestion-item">
+                            <div class="suggestion-icon">🥗</div>
+                            <div class="suggestion-info">
+                                <h4>Grilled Chicken Salad</h4>
+                                <p>350 kcal • High Protein</p>
+                            </div>
+                        </div>
+                        <div class="suggestion-item">
+                            <div class="suggestion-icon">🍲</div>
+                            <div class="suggestion-info">
+                                <h4>Quinoa Bowl</h4>
+                                <p>420 kcal • Balanced</p>
+                            </div>
+                        </div>
+                        <div class="suggestion-item">
+                            <div class="suggestion-icon">🐟</div>
+                            <div class="suggestion-info">
+                                <h4>Salmon & Vegetables</h4>
+                                <p>380 kcal • Omega-3 Rich</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NUTRITION CHART -->
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <span class="card-icon">📈</span>
+                        <h3>Weekly Nutrition</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="nutritionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MEAL LOG MODAL -->
+    <div class="modal" id="mealModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Log Meal</h2>
+                <button class="modal-close" onclick="closeMealLog()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Meal Type</label>
+                    <select id="mealType" class="form-input">
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snacks">Snacks</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Food Name</label>
+                    <input type="text" id="foodName" class="form-input" placeholder="e.g., Grilled Chicken Breast">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Calories</label>
+                        <input type="number" id="foodCalories" class="form-input" placeholder="kcal">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="foodQuantity" class="form-input" placeholder="1" value="1" step="0.1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Protein (g)</label>
+                        <input type="number" id="foodProtein" class="form-input" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Carbs (g)</label>
+                        <input type="number" id="foodCarbs" class="form-input" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Fats (g)</label>
+                        <input type="number" id="foodFats" class="form-input" placeholder="0">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeMealLog()">Cancel</button>
+                    <button class="btn-save" onclick="saveMeal()">Save Meal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../load-sidebar.js"></script>
+    <script src="diet.js"></script>
+</body>
+
+</html>

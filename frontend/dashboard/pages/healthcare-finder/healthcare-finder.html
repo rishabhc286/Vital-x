@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Finder | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="healthcare-finder.css">
+</head>
+
+<body data-page="healthcare-finder">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1>🏥 Healthcare Finder</h1>
+                    <p class="subtitle">Find top-rated doctors and hospitals in your city</p>
+                </div>
+            </div>
+
+            <!-- Disclaimer Banner -->
+            <div class="disclaimer-banner">
+                <span class="disclaimer-icon">⚠️</span>
+                <p><strong>Important:</strong> This information is for awareness only and does not replace
+                    professional
+                    medical consultation.</p>
+            </div>
+
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-card">
+                    <div class="search-header">
+                        <h2>🔍 Search Healthcare Providers</h2>
+                        <p>Enter your city and select a medical specialization</p>
+                    </div>
+
+                    <div class="search-inputs">
+                        <div class="input-group">
+                            <label for="cityInput">
+                                <span class="label-icon">📍</span>
+                                City / Location
+                            </label>
+                            <input type="text" id="cityInput" placeholder="e.g., Mumbai, Delhi, Bangalore..."
+                                autocomplete="off">
+                            <div id="citySuggestions" class="suggestions-dropdown"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="categorySelect">
+                                <span class="label-icon">🩺</span>
+                                Medical Specialization
+                            </label>
+                            <select id="categorySelect">
+                                <option value="">Select a category...</option>
+                                <option value="cardiology">Cardiologist (Heart Specialist)</option>
+                                <option value="gynecology">Gynecologist (Women's Health)</option>
+                                <option value="orthopedic">Orthopedic (Bone & Joint)</option>
+                                <option value="neurology">Neurologist (Brain & Nervous System)</option>
+                                <option value="dermatology">Dermatologist (Skin Specialist)</option>
+                                <option value="general">General Physician</option>
+                                <option value="pediatrics">Pediatrician (Child Specialist)</option>
+                                <option value="ophthalmology">Ophthalmologist (Eye Specialist)</option>
+                                <option value="ent">ENT Specialist (Ear, Nose, Throat)</option>
+                                <option value="psychiatry">Psychiatrist (Mental Health)</option>
+                            </select>
+                        </div>
+
+                        <button class="btn-search" onclick="searchHealthcare()">
+                            <span class="btn-icon">🔍</span>
+                            Search Now
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Recommendation (if coming from diagnosis) -->
+            <div id="aiRecommendation" class="ai-recommendation" style="display: none;">
+                <div class="ai-badge">✨ AI Suggestion</div>
+                <p>Based on your recent health inputs, these specializations may be relevant for you.</p>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" style="display: none;">
+                <!-- Top Doctors -->
+                <section class="results-section">
+                    <div class="section-header">
+                        <h2>👨‍⚕️ Top-Rated Doctors</h2>
+                        <p id="doctorCategory">Showing results for your selected category</p>
+                    </div>
+                    <div id="doctorsGrid" class="doctors-grid"></div>
+                </section>
+
+                <!-- Top Hospitals -->
+                <section class="results-section">
+                    <div class="section-header">
+                        <h2>🏥 Popular Hospitals</h2>
+                        <p id="hospitalCity">Showing hospitals in your city</p>
+                    </div>
+                    <div id="hospitalsGrid" class="hospitals-grid"></div>
+                </section>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <h3>Start Your Search</h3>
+                <p>Enter a city and select a medical category to find top-rated healthcare providers near you.</p>
+            </div>
+
+            <!-- No Results State -->
+            <div id="noResults" class="empty-state" style="display: none;">
+                <div class="empty-icon">😔</div>
+                <h3>No Results Found</h3>
+                <p>We couldn't find healthcare providers for this combination. Try a different city or category.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="healthcare-finder.js"></script>
+</body>
+
+</html>

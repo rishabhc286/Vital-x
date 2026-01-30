@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Analyzer | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="meal-analyzer.css">
+</head>
+
+<body data-page="meal-analyzer">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1>📸 Meal Analyzer</h1>
+                    <p class="subtitle">Upload your meal photo for instant protein & nutrition estimation</p>
+                    <div class="disclaimer-badge">
+                        <span class="disclaimer-icon">⚠️</span>
+                        <span>Nutrition values are approximate and for awareness only</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="viewAnalysisHistory()">📊 History</button>
+                </div>
+            </div>
+
+            <!-- UPLOAD SECTION -->
+            <div class="card upload-card">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📸</div>
+                        <h3>Upload or Drag & Drop Your Meal Photo</h3>
+                        <p>Supports JPG, PNG, WEBP • Max 10MB</p>
+                        <input type="file" id="mealImageInput" accept="image/*" onchange="handleImageUpload(event)"
+                            hidden>
+                        <button class="btn-upload" onclick="document.getElementById('mealImageInput').click()">
+                            Choose Photo
+                        </button>
+                        <div class="camera-option">
+                            <button class="btn-camera" onclick="openCamera()">
+                                📷 Take Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYSIS RESULT -->
+            <div class="card analysis-card" id="analysisCard" style="display: none;">
+                <div class="analysis-header">
+                    <h2>🧠 AI Analysis Result</h2>
+                    <button class="btn-clear" onclick="clearAnalysis()">✕ Clear</button>
+                </div>
+
+                <div class="analysis-content">
+                    <!-- Uploaded Image -->
+                    <div class="meal-image-container">
+                        <img id="mealImage" src="" alt="Meal" class="meal-image">
+                    </div>
+
+                    <!-- Nutrition Breakdown -->
+                    <div class="nutrition-breakdown">
+                        <div class="nutrition-header">
+                            <h3>Nutrition Estimation</h3>
+                            <span class="estimation-badge">AI Estimated</span>
+                        </div>
+
+                        <!-- Protein Focus -->
+                        <div class="protein-highlight">
+                            <div class="protein-icon">🥩</div>
+                            <div class="protein-details">
+                                <span class="protein-label">Estimated Protein</span>
+                                <span class="protein-value" id="proteinValue">--g</span>
+                            </div>
+                            <div class="protein-status" id="proteinStatus">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Calculating...</span>
+                            </div>
+                        </div>
+
+                        <!-- Protein Sources -->
+                        <div class="protein-sources" id="proteinSources">
+                            <h4>Protein Sources Detected</h4>
+                            <div class="sources-list" id="sourcesList">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+
+                        <!-- Other Nutrients -->
+                        <div class="other-nutrients">
+                            <div class="nutrient-item">
+                                <span class="nutrient-icon">🔥</span>
+                                <div class="nutrient-info">
+                                    <span class="nutrient-label">Calories</span>
+                                    <span class="nutrient-value" id="caloriesValue">--</span>
+                                </div>
+                            </div>
+                            <div class="nutrient-item">
+                                <span class="nutrient-icon">🍞</span>
+                                <div class="nutrient-info">
+                                    <span class="nutrient-label">Carbs</span>
+                                    <span class="nutrient-value" id="carbsValue">--g</span>
+                                </div>
+                            </div>
+                            <div class="nutrient-item">
+                                <span class="nutrient-icon">🥑</span>
+                                <div class="nutrient-info">
+                                    <span class="nutrient-label">Fats</span>
+                                    <span class="nutrient-value" id="fatsValue">--g</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food Items Detected -->
+                        <div class="food-items-section">
+                            <h4>Food Items Detected</h4>
+                            <div class="food-items-grid" id="foodItemsGrid">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="insights-section">
+                    <h3>💡 Diet Insights</h3>
+                    <div class="insight-card" id="proteinInsight">
+                        <div class="insight-icon">🎯</div>
+                        <div class="insight-content">
+                            <h4>Protein Intake</h4>
+                            <p id="proteinInsightText">Analyzing your protein intake...</p>
+                        </div>
+                    </div>
+                    <div class="insight-card" id="suggestionInsight">
+                        <div class="insight-icon">💡</div>
+                        <div class="insight-content">
+                            <h4>Suggestion</h4>
+                            <p id="suggestionText">Recommendations will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="action-buttons">
+                    <button class="btn-save" onclick="saveAnalysis()">
+                        💾 Save to History
+                    </button>
+                    <button class="btn-secondary" onclick="analyzeAnother()">
+                        📸 Analyze Another
+                    </button>
+                </div>
+            </div>
+
+            <!-- DAILY PROTEIN TRACKER -->
+            <div class="card tracker-card">
+                <div class="tracker-header">
+                    <h2>📊 Today's Protein Tracker</h2>
+                    <p>Track your daily protein intake goal</p>
+                </div>
+
+                <div class="protein-progress-container">
+                    <div class="progress-circle">
+                        <svg class="progress-svg" viewBox="0 0 200 200">
+                            <circle class="progress-bg" cx="100" cy="100" r="85"></circle>
+                            <circle class="progress-bar" cx="100" cy="100" r="85" id="proteinProgressCircle"></circle>
+                        </svg>
+                        <div class="progress-content">
+                            <div class="progress-value" id="dailyProteinValue">0g</div>
+                            <div class="progress-label">of <span id="proteinGoal">120g</span></div>
+                        </div>
+                    </div>
+
+                    <div class="tracker-stats">
+                        <div class="tracker-stat">
+                            <span class="stat-label">Meals Logged</span>
+                            <span class="stat-value" id="mealsLogged">0</span>
+                        </div>
+                        <div class="tracker-stat">
+                            <span class="stat-label">Remaining</span>
+                            <span class="stat-value" id="proteinRemaining">120g</span>
+                        </div>
+                        <div class="tracker-stat">
+                            <span class="stat-label">Progress</span>
+                            <span class="stat-value" id="proteinProgress">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-set-goal" onclick="setProteinGoal()">
+                    ⚙️ Set Daily Goal
+                </button>
+            </div>
+
+            <!-- RECENT ANALYSES -->
+            <div class="card history-card">
+                <div class="card-header">
+                    <h2>📜 Recent Analyses</h2>
+                    <p>Your meal analysis history</p>
+                </div>
+                <div class="history-list" id="historyList">
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <p>No analyses yet. Upload your first meal!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../load-sidebar.js"></script>
+    <script src="meal-analyzer.js"></script>
+</body>
+
+</html>

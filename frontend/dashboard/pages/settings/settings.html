@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="settings.css">
+</head>
+
+<body data-page="settings">
+
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+    <script src="../../load-sidebar.js"></script>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>⚙️ Settings</h1>
+                <p class="subtitle">Manage your account settings and preferences</p>
+            </div>
+        </div>
+
+        <!-- SETTINGS SECTIONS -->
+        <div class="settings-container">
+            <!-- GENERAL SETTINGS -->
+            <div class="card settings-section">
+                <div class="section-header">
+                    <span class="section-icon">🔧</span>
+                    <h2>General Settings</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Language</h3>
+                            <p>Choose your preferred language</p>
+                        </div>
+                        <select class="setting-select" id="language">
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Theme</h3>
+                            <p>Choose your preferred theme</p>
+                        </div>
+                        <select class="setting-select" id="theme">
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Date Format</h3>
+                            <p>Choose how dates are displayed</p>
+                        </div>
+                        <select class="setting-select" id="dateFormat">
+                            <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                            <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                            <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Time Format</h3>
+                            <p>12-hour or 24-hour format</p>
+                        </div>
+                        <select class="setting-select" id="timeFormat">
+                            <option value="12">12-hour</option>
+                            <option value="24">24-hour</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOTIFICATION SETTINGS -->
+            <div class="card settings-section">
+                <div class="section-header">
+                    <span class="section-icon">🔔</span>
+                    <h2>Notifications</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Email Notifications</h3>
+                            <p>Receive email updates about your health</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailNotifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>SMS Notifications</h3>
+                            <p>Receive SMS alerts for important updates</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="smsNotifications">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Push Notifications</h3>
+                            <p>Receive browser push notifications</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="pushNotifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Health Alerts</h3>
+                            <p>Get notified about health anomalies</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="healthAlerts" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Medication Reminders</h3>
+                            <p>Reminders for medication schedules</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="medicationReminders" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Activity Reminders</h3>
+                            <p>Reminders for daily activities</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="activityReminders">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRIVACY & SECURITY -->
+            <div class="card settings-section">
+                <div class="section-header">
+                    <span class="section-icon">🔒</span>
+                    <h2>Privacy & Security</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security to your account</p>
+                        </div>
+                        <button class="btn-action" onclick="enable2FA()">Enable</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Change Password</h3>
+                            <p>Update your account password</p>
+                        </div>
+                        <button class="btn-action" onclick="changePassword()">Change</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Login History</h3>
+                            <p>View your recent login activity</p>
+                        </div>
+                        <button class="btn-action" onclick="viewLoginHistory()">View</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Data Sharing</h3>
+                            <p>Share anonymized data for research</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dataSharing">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Location Services</h3>
+                            <p>Allow location tracking for emergency services</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="locationServices" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HEALTH MONITORING -->
+            <div class="card settings-section">
+                <div class="section-header">
+                    <span class="section-icon">💓</span>
+                    <h2>Health Monitoring</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Automatic Monitoring</h3>
+                            <p>Enable continuous health monitoring</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoMonitoring" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Monitoring Frequency</h3>
+                            <p>How often to check health metrics</p>
+                        </div>
+                        <select class="setting-select" id="monitoringFrequency">
+                            <option value="realtime">Real-time</option>
+                            <option value="5min">Every 5 minutes</option>
+                            <option value="15min">Every 15 minutes</option>
+                            <option value="1hour">Every hour</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Emergency Detection</h3>
+                            <p>Automatically detect health emergencies</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emergencyDetection" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Health Score Calculation</h3>
+                            <p>Method for calculating health score</p>
+                        </div>
+                        <select class="setting-select" id="healthScoreMethod">
+                            <option value="comprehensive">Comprehensive</option>
+                            <option value="weighted">Weighted Average</option>
+                            <option value="simple">Simple Average</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DEVICE SETTINGS -->
+            <div class="card settings-section">
+                <div class="section-header">
+                    <span class="section-icon">⌚</span>
+                    <h2>Connected Devices</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Smartwatch</h3>
+                            <p>Apple Watch - Connected</p>
+                        </div>
+                        <button class="btn-action secondary" onclick="manageDevice('watch')">Manage</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Fitness Tracker</h3>
+                            <p>Fitbit Charge 5 - Connected</p>
+                        </div>
+                        <button class="btn-action secondary" onclick="manageDevice('tracker')">Manage</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Blood Pressure Monitor</h3>
+                            <p>No device connected</p>
+                        </div>
+                        <button class="btn-action" onclick="addDevice()">Add Device</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATA MANAGEMENT -->
+            <div class="card settings-section">
+                <div class="section-header">
+                    <span class="section-icon">📊</span>
+                    <h2>Data Management</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Export Data</h3>
+                            <p>Download all your health data</p>
+                        </div>
+                        <button class="btn-action" onclick="exportData()">Export</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Backup Data</h3>
+                            <p>Create a backup of your data</p>
+                        </div>
+                        <button class="btn-action" onclick="backupData()">Backup</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Clear Cache</h3>
+                            <p>Clear cached data to free up space</p>
+                        </div>
+                        <button class="btn-action secondary" onclick="clearCache()">Clear</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Data Retention</h3>
+                            <p>How long to keep your data</p>
+                        </div>
+                        <select class="setting-select" id="dataRetention">
+                            <option value="1year">1 Year</option>
+                            <option value="2years">2 Years</option>
+                            <option value="5years">5 Years</option>
+                            <option value="forever">Forever</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCOUNT SETTINGS -->
+            <div class="card settings-section danger-zone">
+                <div class="section-header">
+                    <span class="section-icon">⚠️</span>
+                    <h2>Account Management</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Deactivate Account</h3>
+                            <p>Temporarily disable your account</p>
+                        </div>
+                        <button class="btn-action danger" onclick="deactivateAccount()">Deactivate</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Delete Account</h3>
+                            <p>Permanently delete your account and all data</p>
+                        </div>
+                        <button class="btn-action danger" onclick="deleteAccount()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAVE BUTTON -->
+        <div class="save-section">
+            <button class="btn-save" onclick="saveSettings()">💾 Save All Settings</button>
+        </div>
+    </main>
+</div>
+
+<script src="../../load-sidebar.js"></script>
+<script src="settings.js"></script>
+</body>
+</html>
+

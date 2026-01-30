@@ -1,0 +1,277 @@
+/* ================= SETTINGS PAGE - LANDING PAGE THEME ================= */
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 15px;
+}
+
+/* ================= SETTINGS CONTAINER ================= */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.settings-section {
+    padding: 32px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+.section-icon {
+    font-size: 28px;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+/* ================= SETTINGS LIST ================= */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(2,6,23,0.4);
+    border-radius: 12px;
+    border: 1px solid var(--border-glass);
+    transition: all 0.3s ease;
+}
+
+.setting-item:hover {
+    background: rgba(2,6,23,0.6);
+    border-color: var(--accent);
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.setting-info p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* ================= TOGGLE SWITCH ================= */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.1);
+    transition: 0.3s;
+    border-radius: 26px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--text);
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* ================= SETTING SELECT ================= */
+.setting-select {
+    padding: 10px 16px;
+    background: rgba(2,6,23,0.6);
+    border: 1px solid var(--border-glass);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.setting-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(2,6,23,0.8);
+    box-shadow: 0 0 0 3px rgba(45,212,191,0.1);
+}
+
+.setting-select option {
+    background: var(--bg-main);
+    color: var(--text);
+}
+
+/* ================= ACTION BUTTONS ================= */
+.btn-action {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+    border: none;
+    border-radius: 10px;
+    color: #020617;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(45,212,191,0.3);
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(45,212,191,0.4);
+}
+
+.btn-action.secondary {
+    background: rgba(15,23,42,0.8);
+    border: 1px solid var(--border-glass);
+    color: var(--text);
+    box-shadow: none;
+}
+
+.btn-action.secondary:hover {
+    background: rgba(15,23,42,0.95);
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(45,212,191,0.2);
+}
+
+.btn-action.danger {
+    background: linear-gradient(135deg, var(--danger), #dc2626);
+    color: white;
+    box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+}
+
+.btn-action.danger:hover {
+    box-shadow: 0 6px 24px rgba(239,68,68,0.4);
+}
+
+/* ================= DANGER ZONE ================= */
+.danger-zone {
+    border: 2px solid rgba(239,68,68,0.3);
+    background: linear-gradient(
+            135deg,
+            rgba(239,68,68,0.05),
+            rgba(220,38,38,0.02)
+    );
+}
+
+.danger-zone .section-header {
+    border-bottom-color: rgba(239,68,68,0.3);
+}
+
+/* ================= SAVE SECTION ================= */
+.save-section {
+    position: sticky;
+    bottom: 0;
+    padding: 20px 0;
+    background: rgba(2,6,23,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-glass);
+    margin-top: 32px;
+    text-align: center;
+}
+
+.btn-save {
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+    border: none;
+    border-radius: 12px;
+    color: #020617;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 32px rgba(45,212,191,0.4);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(45,212,191,0.5);
+}
+
+.btn-save:active {
+    transform: translateY(0);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 28px;
+    }
+
+    .settings-section {
+        padding: 24px;
+    }
+
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .setting-select,
+    .btn-action {
+        width: 100%;
+    }
+}
+

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="emergency.css">
+</head>
+
+<body data-page="emergency">
+
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+    <script src="../../load-sidebar.js"></script>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>🚨 Emergency</h1>
+                <p class="subtitle">Quick access to emergency services and health monitoring</p>
+            </div>
+        </div>
+
+        <!-- EMERGENCY ALERT SECTION -->
+        <div class="emergency-alert-section">
+            <div class="card emergency-alert-card">
+                <div class="alert-header">
+                    <span class="alert-icon">🚨</span>
+                    <h2>Emergency Alert</h2>
+                </div>
+                <p class="alert-description">Press the button below to send an emergency alert with your location and health status to emergency contacts and services.</p>
+                <button class="emergency-btn" id="emergencyBtn" onclick="triggerEmergency()">
+                    <span class="btn-pulse"></span>
+                    <span class="btn-text">EMERGENCY ALERT</span>
+                </button>
+                <div class="alert-status" id="alertStatus">
+                    <span class="status-dot"></span>
+                    <span>System Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS GRID -->
+        <div class="quick-actions-grid">
+            <div class="card action-card" onclick="callEmergency('911')">
+                <div class="action-icon">📞</div>
+                <h3>Call 911</h3>
+                <p>Emergency Services</p>
+            </div>
+            <div class="card action-card" onclick="callEmergency('poison')">
+                <div class="action-icon">☠️</div>
+                <h3>Poison Control</h3>
+                <p>1-800-222-1222</p>
+            </div>
+            <div class="card action-card" onclick="shareLocation()">
+                <div class="action-icon">📍</div>
+                <h3>Share Location</h3>
+                <p>Send your current location</p>
+            </div>
+            <div class="card action-card" onclick="showMedicalInfo()">
+                <div class="action-icon">🏥</div>
+                <h3>Medical Info</h3>
+                <p>View medical information</p>
+            </div>
+        </div>
+
+        <!-- EMERGENCY CONTACTS -->
+        <div class="contacts-section">
+            <div class="card contacts-card">
+                <div class="card-header">
+                    <span class="card-icon">👥</span>
+                    <h3>Emergency Contacts</h3>
+                    <button class="btn-add" onclick="addContact()">+ Add</button>
+                </div>
+                <div class="contacts-list" id="contactsList">
+                    <div class="contact-item">
+                        <div class="contact-avatar">JD</div>
+                        <div class="contact-info">
+                            <h4>John Doe</h4>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                        <div class="contact-actions">
+                            <button class="btn-call" onclick="callContact('+15551234567')">📞</button>
+                            <button class="btn-msg" onclick="messageContact('+15551234567')">💬</button>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-avatar">JD</div>
+                        <div class="contact-info">
+                            <h4>Jane Smith</h4>
+                            <p>+1 (555) 987-6543</p>
+                        </div>
+                        <div class="contact-actions">
+                            <button class="btn-call" onclick="callContact('+15559876543')">📞</button>
+                            <button class="btn-msg" onclick="messageContact('+15559876543')">💬</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HEALTH STATUS MONITORING -->
+        <div class="monitoring-section">
+            <div class="card monitoring-card">
+                <div class="card-header">
+                    <span class="card-icon">💓</span>
+                    <h3>Real-Time Health Monitoring</h3>
+                </div>
+                <div class="health-metrics">
+                    <div class="metric-item">
+                        <div class="metric-icon">❤️</div>
+                        <div class="metric-info">
+                            <span class="metric-label">Heart Rate</span>
+                            <span class="metric-value" id="heartRate">72</span>
+                            <span class="metric-unit">bpm</span>
+                        </div>
+                        <div class="metric-status safe" id="heartRateStatus">Normal</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-icon">💓</div>
+                        <div class="metric-info">
+                            <span class="metric-label">SpO2</span>
+                            <span class="metric-value" id="spo2">98</span>
+                            <span class="metric-unit">%</span>
+                        </div>
+                        <div class="metric-status safe" id="spo2Status">Normal</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-icon">🩺</div>
+                        <div class="metric-info">
+                            <span class="metric-label">Blood Pressure</span>
+                            <span class="metric-value" id="bloodPressure">120/80</span>
+                            <span class="metric-unit">mmHg</span>
+                        </div>
+                        <div class="metric-status safe" id="bpStatus">Normal</div>
+                    </div>
+                </div>
+                <div class="monitoring-controls">
+                    <button class="btn-secondary" onclick="startMonitoring()">Start Monitoring</button>
+                    <button class="btn-secondary" onclick="stopMonitoring()">Stop Monitoring</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEDICAL INFORMATION CARD -->
+        <div class="medical-info-section">
+            <div class="card medical-card">
+                <div class="card-header">
+                    <span class="card-icon">🏥</span>
+                    <h3>Medical Information</h3>
+                    <button class="btn-edit" onclick="editMedicalInfo()">✏️ Edit</button>
+                </div>
+                <div class="medical-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Blood Type:</span>
+                        <span class="detail-value" id="bloodType">O+</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Allergies:</span>
+                        <span class="detail-value" id="allergies">None known</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Medications:</span>
+                        <span class="detail-value" id="medications">None</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Medical Conditions:</span>
+                        <span class="detail-value" id="conditions">None</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Emergency Contact:</span>
+                        <span class="detail-value" id="emergencyContact">John Doe - +1 (555) 123-4567</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT ALERTS -->
+        <div class="alerts-history-section">
+            <div class="card alerts-card">
+                <div class="card-header">
+                    <span class="card-icon">📋</span>
+                    <h3>Recent Alerts</h3>
+                </div>
+                <div class="alerts-list" id="alertsList">
+                    <div class="alert-item">
+                        <div class="alert-time">2 hours ago</div>
+                        <div class="alert-message">Health check completed - All systems normal</div>
+                        <div class="alert-type info">Info</div>
+                    </div>
+                    <div class="alert-item">
+                        <div class="alert-time">1 day ago</div>
+                        <div class="alert-message">Location shared with emergency contacts</div>
+                        <div class="alert-type success">Success</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="../../load-sidebar.js"></script>
+<script src="emergency.js"></script>
+</body>
+</html>

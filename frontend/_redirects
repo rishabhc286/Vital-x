@@ -1,0 +1,6 @@
+# Netlify Redirects File
+# Serve static files directly (files with extensions)
+# Only redirect HTML5 pushState URLs to index.html
+
+# All requests without file extensions go to index.html for SPA routing
+/*    /index.html   200

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie Calculator | Vital-X</title>
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="calorie-calculator.css">
+</head>
+
+<body data-page="calories">
+
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+    <script src="../../load-sidebar.js"></script>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>🔥 Calorie Calculator</h1>
+                <p class="subtitle">Accurate TDEE, BMI, Macros & Daily Burn Calculator</p>
+            </div>
+        </div>
+
+        <!-- CALCULATOR GRID -->
+        <div class="calculator-grid">
+            <!-- USER INPUT CARD -->
+            <div class="card input-card">
+                <div class="card-header">
+                    <span class="card-icon">🧮</span>
+                    <h3>Your Details</h3>
+                </div>
+
+                <div class="input-group">
+                    <label>Age</label>
+                    <input id="age" type="number" placeholder="Enter your age" min="1" max="120">
+                </div>
+
+                <div class="input-group">
+                    <label>Height (cm)</label>
+                    <input id="height" type="number" placeholder="Enter height in cm" min="50" max="250">
+                </div>
+
+                <div class="input-group">
+                    <label>Weight (kg)</label>
+                    <input id="weight" type="number" placeholder="Enter weight in kg" min="20" max="300">
+                </div>
+
+                <div class="input-group">
+                    <label>Gender</label>
+                    <select id="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Activity Level</label>
+                    <select id="activity">
+                        <option value="1.2">Sedentary (little/no exercise)</option>
+                        <option value="1.375">Light (1-3 days/week)</option>
+                        <option value="1.55" selected>Moderate (4-5 days/week)</option>
+                        <option value="1.725">Active (6-7 days/week)</option>
+                        <option value="1.9">Very Active (2x per day)</option>
+                    </select>
+                </div>
+
+                <button class="btn-primary" onclick="calculateTDEE()">
+                    <span>Calculate TDEE</span>
+                    <span class="btn-icon">→</span>
+                </button>
+            </div>
+
+            <!-- RESULTS CARD -->
+            <div class="card result-card">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <h3>Your Results</h3>
+                </div>
+
+                <div class="result-main">
+                    <div class="result-label">Maintenance Calories (TDEE)</div>
+                    <div class="result-value" id="maintenance">--</div>
+                    <div class="result-unit">kcal/day</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Weight Loss Goals -->
+                <div class="goal-section">
+                    <h4 class="goal-title">📉 Weight Loss Goals</h4>
+                    <div class="goal-grid">
+                        <div class="goal-item">
+                            <span class="goal-label">Mild (0.25 kg/week)</span>
+                            <span class="goal-value" id="mildLoss">--</span>
+                        </div>
+                        <div class="goal-item">
+                            <span class="goal-label">Normal (0.5 kg/week)</span>
+                            <span class="goal-value" id="loss">--</span>
+                        </div>
+                        <div class="goal-item">
+                            <span class="goal-label">Extreme (1 kg/week)</span>
+                            <span class="goal-value" id="extremeLoss">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Weight Gain Goals -->
+                <div class="goal-section">
+                    <h4 class="goal-title">📈 Weight Gain Goals</h4>
+                    <div class="goal-grid">
+                        <div class="goal-item">
+                            <span class="goal-label">Mild (0.25 kg/week)</span>
+                            <span class="goal-value" id="mildGain">--</span>
+                        </div>
+                        <div class="goal-item">
+                            <span class="goal-label">Normal (0.5 kg/week)</span>
+                            <span class="goal-value" id="gain">--</span>
+                        </div>
+                        <div class="goal-item">
+                            <span class="goal-label">Fast (1 kg/week)</span>
+                            <span class="goal-value" id="fastGain">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BMI CALCULATOR -->
+            <div class="card bmi-card">
+                <div class="card-header">
+                    <span class="card-icon">📏</span>
+                    <h3>BMI Calculator</h3>
+                </div>
+
+                <div class="bmi-result" id="bmiResult">
+                    <div class="bmi-value" id="bmiValue">--</div>
+                    <div class="bmi-category" id="bmiCategory">Enter your details</div>
+                    <div class="bmi-bar">
+                        <div class="bmi-indicator" id="bmiIndicator"></div>
+                    </div>
+                    <div class="bmi-range">
+                        <span>Underweight</span>
+                        <span>Normal</span>
+                        <span>Overweight</span>
+                        <span>Obese</span>
+                    </div>
+                </div>
+
+                <button class="btn-secondary" onclick="calculateBMI()">Calculate BMI</button>
+            </div>
+
+            <!-- MACRO CALCULATOR -->
+            <div class="card macro-card">
+                <div class="card-header">
+                    <span class="card-icon">🥗</span>
+                    <h3>Macro Breakdown</h3>
+                </div>
+
+                <div class="macro-inputs">
+                    <div class="input-group">
+                        <label>Target Calories</label>
+                        <input id="targetCalories" type="number" placeholder="Enter target calories">
+                    </div>
+                    <select id="macroSplit">
+                        <option value="balanced">Balanced (40/30/30)</option>
+                        <option value="high-protein">High Protein (40/40/20)</option>
+                        <option value="low-carb">Low Carb (25/45/30)</option>
+                        <option value="high-carb">High Carb (50/25/25)</option>
+                    </select>
+                </div>
+
+                <button class="btn-secondary" onclick="calculateMacros()">Calculate Macros</button>
+
+                <div class="macro-results" id="macroResults">
+                    <div class="macro-item">
+                        <div class="macro-label">
+                            <span>Protein</span>
+                            <span class="macro-percent">30%</span>
+                        </div>
+                        <div class="macro-bar">
+                            <div class="macro-fill protein" style="width: 0%"></div>
+                        </div>
+                        <div class="macro-grams" id="proteinGrams">-- g</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="macro-label">
+                            <span>Carbs</span>
+                            <span class="macro-percent">40%</span>
+                        </div>
+                        <div class="macro-bar">
+                            <div class="macro-fill carbs" style="width: 0%"></div>
+                        </div>
+                        <div class="macro-grams" id="carbsGrams">-- g</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="macro-label">
+                            <span>Fats</span>
+                            <span class="macro-percent">30%</span>
+                        </div>
+                        <div class="macro-bar">
+                            <div class="macro-fill fats" style="width: 0%"></div>
+                        </div>
+                        <div class="macro-grams" id="fatsGrams">-- g</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CALORIES BURN CALCULATOR -->
+            <div class="card burn-card">
+                <div class="card-header">
+                    <span class="card-icon">🔥</span>
+                    <h3>Calories Burn Today</h3>
+                </div>
+
+                <div class="activity-inputs">
+                    <div class="activity-item">
+                        <label>🚶 Walking (minutes)</label>
+                        <input id="walk" type="number" placeholder="0" min="0">
+                    </div>
+                    <div class="activity-item">
+                        <label>🏃 Running (minutes)</label>
+                        <input id="run" type="number" placeholder="0" min="0">
+                    </div>
+                    <div class="activity-item">
+                        <label>💪 Gym/Weight Training (minutes)</label>
+                        <input id="gym" type="number" placeholder="0" min="0">
+                    </div>
+                    <div class="activity-item">
+                        <label>🚴 Cycling (minutes)</label>
+                        <input id="cycle" type="number" placeholder="0" min="0">
+                    </div>
+                    <div class="activity-item">
+                        <label>🏊 Swimming (minutes)</label>
+                        <input id="swim" type="number" placeholder="0" min="0">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="calculateBurn()">
+                    <span>Calculate Burn</span>
+                    <span class="btn-icon">→</span>
+                </button>
+
+                <div class="burn-result">
+                    <div class="burn-label">Total Calories Burned</div>
+                    <div class="burn-value" id="burn">--</div>
+                    <div class="burn-unit">kcal</div>
+                </div>
+            </div>
+
+            <!-- MEAL SUGGESTIONS -->
+            <div class="card meal-card">
+                <div class="card-header">
+                    <span class="card-icon">🍽️</span>
+                    <h3>Meal Suggestions</h3>
+                </div>
+
+                <div class="meal-suggestions" id="mealSuggestions">
+                    <p class="meal-hint">Calculate your TDEE to get personalized meal suggestions</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="../../load-sidebar.js"></script>
+<script src="calorie-calculator.js"></script>
+</body>
+</html>

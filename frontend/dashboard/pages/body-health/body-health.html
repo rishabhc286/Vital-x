@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Timeline & Risk Evolution | Vital-X</title>
+    <meta name="description" content="Visualize how your health evolves over time based on lifestyle decisions">
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="body-health.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body data-page="health-timeline">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="dashboard-header">
+                <div>
+                    <h1>📈 Health Timeline & Risk Evolution</h1>
+                    <p>See how your health evolves based on lifestyle decisions</p>
+                </div>
+                <div class="header-actions">
+                    <span class="pill">Last 30 Days</span>
+                </div>
+            </div>
+
+            <!-- TIMELINE NAVIGATION -->
+            <div class="card timeline-nav-card">
+                <div class="timeline-nav">
+                    <button class="timeline-btn active" data-period="past" onclick="switchTimeline('past')">
+                        <span class="timeline-icon">⏮️</span>
+                        <span class="timeline-label">Past 30 Days</span>
+                    </button>
+                    <button class="timeline-btn" data-period="today" onclick="switchTimeline('today')">
+                        <span class="timeline-icon">📍</span>
+                        <span class="timeline-label">Today</span>
+                    </button>
+                    <button class="timeline-btn" data-period="future" onclick="switchTimeline('future')">
+                        <span class="timeline-icon">⏭️</span>
+                        <span class="timeline-label">Next 3 Months</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CURRENT STATUS OVERVIEW -->
+            <div class="status-overview-grid">
+                <div class="card status-card">
+                    <div class="status-icon">💚</div>
+                    <div class="status-content">
+                        <h3>Current Health Status</h3>
+                        <div class="status-value">Good</div>
+                        <p class="status-trend improving">▲ Improving from last month</p>
+                    </div>
+                </div>
+
+                <div class="card status-card">
+                    <div class="status-icon">📊</div>
+                    <div class="status-content">
+                        <h3>Health Debt Score™</h3>
+                        <div class="status-value">18 points</div>
+                        <p class="status-trend improving">▼ Down from 25 (30 days ago)</p>
+                    </div>
+                </div>
+
+                <div class="card status-card">
+                    <div class="status-icon">🎯</div>
+                    <div class="status-content">
+                        <h3>Lifestyle Consistency</h3>
+                        <div class="status-value">78%</div>
+                        <p class="status-trend stable">→ Stable this month</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN TIMELINE SECTION -->
+            <div class="timeline-content" id="timelineContent">
+
+                <!-- PAST 30 DAYS VIEW -->
+                <div class="timeline-view active" id="pastView">
+                    <h2>📅 Your Health Journey - Last 30 Days</h2>
+
+                    <!-- Health Debt Evolution Chart -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Health Debt Score™ Evolution</h3>
+                            <p class="chart-subtitle">Lower is better • Target: Under 20 points</p>
+                        </div>
+                        <canvas id="healthDebtChart"></canvas>
+                        <div class="chart-insights">
+                            <div class="insight-item good">
+                                <span class="insight-icon">✅</span>
+                                <span>You've reduced your Health Debt by 28% this month!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lifestyle Consistency Chart -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Lifestyle Consistency Score</h3>
+                            <p class="chart-subtitle">Tracking sleep, diet, exercise, and stress management</p>
+                        </div>
+                        <canvas id="consistencyChart"></canvas>
+                        <div class="chart-insights">
+                            <div class="insight-item">
+                                <span class="insight-icon">💡</span>
+                                <span>Your most consistent area: Sleep (92%)</span>
+                            </div>
+                            <div class="insight-item">
+                                <span class="insight-icon">⚠️</span>
+                                <span>Needs improvement: Exercise (65%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Level Progression -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Overall Risk Level Progression</h3>
+                            <p class="chart-subtitle">Combined cardiovascular, metabolic, and mental health risk</p>
+                        </div>
+                        <canvas id="riskProgressionChart"></canvas>
+                        <div class="chart-insights">
+                            <div class="insight-item good">
+                                <span class="insight-icon">📉</span>
+                                <span>Risk decreased by 15% compared to last month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Key Milestones -->
+                    <div class="card milestones-card">
+                        <h3>🏆 Key Milestones This Month</h3>
+                        <div class="milestones-list">
+                            <div class="milestone-item achieved">
+                                <div class="milestone-date">Day 7</div>
+                                <div class="milestone-content">
+                                    <h4>First Week Streak</h4>
+                                    <p>Maintained healthy habits for 7 consecutive days</p>
+                                </div>
+                                <div class="milestone-badge">✅</div>
+                            </div>
+                            <div class="milestone-item achieved">
+                                <div class="milestone-date">Day 15</div>
+                                <div class="milestone-content">
+                                    <h4>Health Debt Below 20</h4>
+                                    <p>Achieved target Health Debt Score for the first time</p>
+                                </div>
+                                <div class="milestone-badge">✅</div>
+                            </div>
+                            <div class="milestone-item achieved">
+                                <div class="milestone-date">Day 22</div>
+                                <div class="milestone-content">
+                                    <h4>Consistency Master</h4>
+                                    <p>Reached 75% lifestyle consistency score</p>
+                                </div>
+                                <div class="milestone-badge">✅</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TODAY VIEW -->
+                <div class="timeline-view" id="todayView">
+                    <h2>📍 Your Health Today</h2>
+
+                    <div class="today-snapshot-grid">
+                        <div class="card snapshot-card">
+                            <h3>Today's Health Debt</h3>
+                            <div class="snapshot-value">12 points</div>
+                            <div class="snapshot-breakdown">
+                                <div class="breakdown-item">
+                                    <span>Sleep:</span>
+                                    <span class="good">0 pts</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Diet:</span>
+                                    <span class="good">5 pts</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Exercise:</span>
+                                    <span class="caution">7 pts</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Stress:</span>
+                                    <span class="good">0 pts</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card snapshot-card">
+                            <h3>Current Risk Level</h3>
+                            <div class="risk-gauge">
+                                <div class="gauge-container">
+                                    <div class="gauge-fill" style="width: 25%"></div>
+                                </div>
+                                <div class="gauge-label">Low Risk (25%)</div>
+                            </div>
+                            <p class="snapshot-note">Based on current lifestyle patterns</p>
+                        </div>
+
+                        <div class="card snapshot-card">
+                            <h3>Lifestyle Score</h3>
+                            <div class="snapshot-value">82/100</div>
+                            <div class="score-bars">
+                                <div class="score-bar">
+                                    <span>Sleep</span>
+                                    <div class="bar"><span style="width: 95%"></span></div>
+                                </div>
+                                <div class="score-bar">
+                                    <span>Diet</span>
+                                    <div class="bar"><span style="width: 80%"></span></div>
+                                </div>
+                                <div class="score-bar">
+                                    <span>Exercise</span>
+                                    <div class="bar"><span style="width: 70%"></span></div>
+                                </div>
+                                <div class="score-bar">
+                                    <span>Stress</span>
+                                    <div class="bar"><span style="width: 85%"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Recommendations -->
+                    <div class="card recommendations-card">
+                        <h3>💡 Today's Action Items</h3>
+                        <div class="recommendations-list">
+                            <div class="recommendation-item">
+                                <div class="rec-icon">🏃</div>
+                                <div class="rec-content">
+                                    <h4>Get 30 minutes of exercise</h4>
+                                    <p>You haven't exercised yet today. A brisk walk would reduce your Health Debt by 10
+                                        points.</p>
+                                </div>
+                                <button class="rec-btn">Track It</button>
+                            </div>
+                            <div class="recommendation-item">
+                                <div class="rec-icon">💧</div>
+                                <div class="rec-content">
+                                    <h4>Drink 3 more glasses of water</h4>
+                                    <p>You're at 5/8 glasses. Staying hydrated improves energy and focus.</p>
+                                </div>
+                                <button class="rec-btn">Track It</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FUTURE VIEW -->
+                <div class="timeline-view" id="futureView">
+                    <h2>🔮 Future Health Projections - Next 3 Months</h2>
+
+                    <!-- Scenario Comparison -->
+                    <div class="card scenarios-card">
+                        <h3>📊 What If Scenarios</h3>
+                        <p class="scenarios-subtitle">See how different choices affect your future health</p>
+
+                        <div class="scenarios-tabs">
+                            <button class="scenario-tab active" onclick="switchScenario('continue')">
+                                Continue Current Routine
+                            </button>
+                            <button class="scenario-tab" onclick="switchScenario('improve')">
+                                Improve Sleep & Diet
+                            </button>
+                            <button class="scenario-tab" onclick="switchScenario('optimal')">
+                                Optimal Lifestyle
+                            </button>
+                        </div>
+
+                        <div class="scenario-content active" id="scenarioContinue">
+                            <canvas id="futureContinueChart"></canvas>
+                            <div class="scenario-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Projected Health Debt (3 months):</span>
+                                    <span class="summary-value caution">22 points</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Risk Level:</span>
+                                    <span class="summary-value caution">Moderate (35%)</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Trend:</span>
+                                    <span class="summary-value stable">→ Stable</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scenario-content" id="scenarioImprove">
+                            <canvas id="futureImproveChart"></canvas>
+                            <div class="scenario-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Projected Health Debt (3 months):</span>
+                                    <span class="summary-value good">8 points</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Risk Level:</span>
+                                    <span class="summary-value good">Low (15%)</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Trend:</span>
+                                    <span class="summary-value good">▼ Improving</span>
+                                </div>
+                                <div class="improvement-note">
+                                    <strong>Key Changes:</strong> Getting 8 hours of sleep and eating balanced meals
+                                    could reduce your Health Debt by 56% in 3 months!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scenario-content" id="scenarioOptimal">
+                            <canvas id="futureOptimalChart"></canvas>
+                            <div class="scenario-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Projected Health Debt (3 months):</span>
+                                    <span class="summary-value excellent">3 points</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Risk Level:</span>
+                                    <span class="summary-value excellent">Very Low (5%)</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Trend:</span>
+                                    <span class="summary-value excellent">▼▼ Rapidly Improving</span>
+                                </div>
+                                <div class="improvement-note">
+                                    <strong>Optimal Lifestyle:</strong> 8hrs sleep + balanced diet + daily exercise +
+                                    stress management = 83% reduction in Health Debt!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Future Milestones -->
+                    <div class="card future-milestones-card">
+                        <h3>🎯 Achievable Goals (Next 3 Months)</h3>
+                        <div class="future-milestones-list">
+                            <div class="future-milestone">
+                                <div class="milestone-timeline">Week 2</div>
+                                <div class="milestone-goal">
+                                    <h4>Health Debt Under 15</h4>
+                                    <p>Achievable with consistent sleep schedule</p>
+                                </div>
+                                <div class="milestone-probability good">85% likely</div>
+                            </div>
+                            <div class="future-milestone">
+                                <div class="milestone-timeline">Week 6</div>
+                                <div class="milestone-goal">
+                                    <h4>30-Day Consistency Streak</h4>
+                                    <p>Maintain all 4 lifestyle pillars daily</p>
+                                </div>
+                                <div class="milestone-probability caution">60% likely</div>
+                            </div>
+                            <div class="future-milestone">
+                                <div class="milestone-timeline">Week 12</div>
+                                <div class="milestone-goal">
+                                    <h4>Health Debt Under 10</h4>
+                                    <p>Requires optimal lifestyle choices</p>
+                                </div>
+                                <div class="milestone-probability caution">45% likely</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../load-sidebar.js"></script>
+    <script src="../../dashboard.js"></script>
+    <script src="body-health.js"></script>
+</body>
+
+</html>

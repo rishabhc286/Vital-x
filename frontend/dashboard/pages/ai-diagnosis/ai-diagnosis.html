@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Diagnosis | Vital-X</title>
+    <meta name="description"
+        content="Future health risk awareness through AI-powered symptom analysis. Prevention-focused, not medical diagnosis.">
+    <link rel="stylesheet" href="../../dashboard.css">
+    <link rel="stylesheet" href="../../new-features.css">
+    <link rel="stylesheet" href="ai-diagnosis.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="../..//backend/config/firebase-config.js?v=4"></script>
+    <script src="../..//backend/services/auth-service.js?v=4"></script>
+    <script src="../..//backend/services/user-service.js?v=4"></script>
+    <script src="../..//backend/services/health-data-service.js?v=4"></script>
+    <script src="../..//backend/config/ai-config.js?v=4"></script>
+    <script src="../..//backend/services/ai-service.js?v=4"></script>
+</head>
+
+<body data-page="ai-diagnosis">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="../../load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="dashboard-header">
+                <div>
+                    <h1>🧠 AI-Diagnosis</h1>
+                    <p>Future health risk awareness & prevention</p>
+                </div>
+                <div class="header-actions">
+                    <span class="pill">Risk Assessment</span>
+                </div>
+            </div>
+
+            <!-- IMPORTANT DISCLAIMER BANNER -->
+            <div class="disclaimer-banner">
+                <div class="disclaimer-icon">⚠️</div>
+                <div class="disclaimer-content">
+                    <h3>Important: This is NOT a Medical Diagnosis</h3>
+                    <p>This tool provides <strong>awareness and prevention insights</strong> based on lifestyle patterns
+                        and symptoms. It does NOT diagnose diseases or replace professional medical advice. Always
+                        consult a healthcare provider for medical concerns.</p>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT GRID -->
+            <div class="diagnosis-container">
+
+                <!-- STEP 1: SYMPTOM QUESTIONNAIRE -->
+                <div class="card questionnaire-card" id="questionnaireCard">
+                    <div class="card-header">
+                        <h2>Step 1: Symptom Assessment</h2>
+                        <p>Answer the following questions to help us understand your current health patterns</p>
+                    </div>
+
+                    <form id="symptomForm" class="symptom-form">
+                        <!-- General Symptoms -->
+                        <div class="question-section">
+                            <h3>General Symptoms</h3>
+
+                            <div class="question-group">
+                                <label>How would you rate your energy levels recently?</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="energy" value="high" required>
+                                        <span>High - Energetic most of the day</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="energy" value="normal">
+                                        <span>Normal - Adequate energy</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="energy" value="low">
+                                        <span>Low - Frequently tired</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="energy" value="very-low">
+                                        <span>Very Low - Constantly fatigued</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="question-group">
+                                <label>Have you experienced any of these symptoms in the past 2 weeks? (Select all that
+                                    apply)</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="symptoms" value="headache">
+                                        <span>Frequent headaches</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="symptoms" value="dizziness">
+                                        <span>Dizziness or lightheadedness</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="symptoms" value="nausea">
+                                        <span>Nausea or upset stomach</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="symptoms" value="chest-pain">
+                                        <span>Chest discomfort</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="symptoms" value="shortness-breath">
+                                        <span>Shortness of breath</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="symptoms" value="joint-pain">
+                                        <span>Joint or muscle pain</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="symptoms" value="none">
+                                        <span>None of the above</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sleep & Mental Health -->
+                        <div class="question-section">
+                            <h3>Sleep & Mental Health</h3>
+
+                            <div class="question-group">
+                                <label>How many hours of sleep do you typically get per night?</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="sleep" value="less-4" required>
+                                        <span>Less than 4 hours</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="sleep" value="4-6">
+                                        <span>4-6 hours</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="sleep" value="6-8">
+                                        <span>6-8 hours</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="sleep" value="more-8">
+                                        <span>More than 8 hours</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="question-group">
+                                <label>How would you rate your stress levels?</label>
+                                <div class="slider-group">
+                                    <input type="range" name="stress" min="0" max="10" value="5" class="stress-slider"
+                                        id="stressSlider">
+                                    <div class="slider-labels">
+                                        <span>Low (0)</span>
+                                        <span id="stressValue">5</span>
+                                        <span>High (10)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="question-group">
+                                <label>Have you experienced any of these mental health symptoms?</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="mental-symptoms" value="anxiety">
+                                        <span>Anxiety or excessive worry</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="mental-symptoms" value="mood-swings">
+                                        <span>Mood swings</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="mental-symptoms" value="difficulty-concentrating">
+                                        <span>Difficulty concentrating</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="mental-symptoms" value="low-mood">
+                                        <span>Persistent low mood</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="mental-symptoms" value="none">
+                                        <span>None of the above</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lifestyle Factors -->
+                        <div class="question-section">
+                            <h3>Lifestyle Factors</h3>
+
+                            <div class="question-group">
+                                <label>How often do you exercise?</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="exercise" value="daily" required>
+                                        <span>Daily or almost daily</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="exercise" value="3-5-week">
+                                        <span>3-5 times per week</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="exercise" value="1-2-week">
+                                        <span>1-2 times per week</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="exercise" value="rarely">
+                                        <span>Rarely or never</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="question-group">
+                                <label>How would you describe your diet?</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="diet" value="balanced" required>
+                                        <span>Balanced - Variety of fruits, vegetables, proteins</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="diet" value="moderate">
+                                        <span>Moderate - Some healthy choices</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="diet" value="poor">
+                                        <span>Poor - Mostly processed foods</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="diet" value="very-poor">
+                                        <span>Very Poor - Irregular meals, unhealthy choices</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="question-group">
+                                <label>Do you have any of these habits?</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="habits" value="smoking">
+                                        <span>Smoking</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="habits" value="alcohol">
+                                        <span>Regular alcohol consumption</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="habits" value="sedentary">
+                                        <span>Sedentary lifestyle (sitting most of the day)</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="habits" value="irregular-sleep">
+                                        <span>Irregular sleep schedule</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="habits" value="none">
+                                        <span>None of the above</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn">
+                                <span>Analyze Health Risks</span>
+                                <span class="btn-icon">→</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- STEP 2: RESULTS (Hidden initially) -->
+                <div class="results-container" id="resultsContainer" style="display: none;">
+
+                    <!-- Risk Overview Card -->
+                    <div class="card risk-overview-card">
+                        <div class="card-header">
+                            <h2>Your Health Risk Assessment</h2>
+                            <p>Based on your responses, here's what we found</p>
+                        </div>
+
+                        <div class="overall-risk" id="overallRisk">
+                            <div class="risk-circle">
+                                <div class="risk-level-text" id="riskLevelText">Analyzing...</div>
+                            </div>
+                            <div class="risk-description" id="riskDescription">
+                                Processing your responses...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Categories -->
+                    <div class="risk-categories-grid" id="riskCategories">
+                        <!-- Dynamically populated -->
+                    </div>
+
+                    <!-- Lifestyle Factors Contributing to Risk -->
+                    <div class="card lifestyle-factors-card">
+                        <h2>Lifestyle Factors Contributing to Risk</h2>
+                        <div class="factors-grid" id="lifestyleFactors">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Preventive Suggestions -->
+                    <div class="card preventive-suggestions-card">
+                        <h2>💡 Preventive Suggestions</h2>
+                        <div class="suggestions-list" id="preventiveSuggestions">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Disclaimer Footer -->
+                    <div class="disclaimer-footer">
+                        <div class="disclaimer-icon">⚠️</div>
+                        <div>
+                            <h4>Remember: This is NOT a Medical Diagnosis</h4>
+                            <p>These insights are for awareness and prevention purposes only. If you have serious health
+                                concerns, please consult a qualified healthcare professional immediately.</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="results-actions">
+                        <button class="secondary-btn" onclick="resetAssessment()">
+                            <span>← Take Another Assessment</span>
+                        </button>
+                        <button class="primary-btn" onclick="saveResults()">
+                            <span>Save Results</span>
+                            <span class="btn-icon">💾</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../load-sidebar.js"></script>
+    <script src="../../dashboard.js"></script>
+    <script src="ai-diagnosis.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Details | Vital-X</title>
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="health-details-custom.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="/backend/config/firebase-config.js"></script>
+    <script src="/backend/services/auth-service.js"></script>
+    <script src="/backend/services/user-service.js"></script>
+    <script src="/backend/utils/ui-helpers.js"></script>
+
+    <!-- UI Helper Styles -->
+    <link rel="stylesheet" href="/backend/utils/ui-helpers.css">
+</head>
+
+<body>
+    <a href="../index.html" class="back-to-landing">Back to Home</a>
+
+    <div class="health-details-wrapper">
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-step active" id="progressStep1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Basic Info</div>
+            </div>
+            <div class="progress-line" id="progressLine1"></div>
+            <div class="progress-step" id="progressStep2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Lifestyle</div>
+            </div>
+            <div class="progress-line" id="progressLine2"></div>
+            <div class="progress-step" id="progressStep3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Medical</div>
+            </div>
+            <div class="progress-line" id="progressLine3"></div>
+            <div class="progress-step" id="progressStep4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Avatar</div>
+            </div>
+        </div>
+
+        <div class="health-form-container">
+            <!-- Header -->
+            <div class="form-header">
+                <div class="header-icon">🏥</div>
+                <h1>Complete Your Health Profile</h1>
+                <p>Help us personalize your health journey with accurate information</p>
+            </div>
+
+            <form id="healthForm">
+
+                <!-- Step 1: Basic Information -->
+                <div class="form-step active" id="step1">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">👤</div>
+                            <div>
+                                <h2>Basic Information</h2>
+                                <p>Tell us about yourself</p>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="age">
+                                    <span class="label-icon">🎂</span>
+                                    Age
+                                </label>
+                                <input type="number" id="age" placeholder="Enter your age" required min="1" max="120"
+                                    oninput="calculateBMI()">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="gender">
+                                    <span class="label-icon">⚧</span>
+                                    Gender
+                                </label>
+                                <select id="gender" onchange="handleGenderChange()" required>
+                                    <option value="">Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="height">
+                                    <span class="label-icon">📏</span>
+                                    Height (cm)
+                                </label>
+                                <input type="number" id="height" placeholder="e.g., 170" required min="50" max="300"
+                                    oninput="calculateBMI()">
+                                <small class="input-hint">Your height in centimeters</small>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="weight">
+                                    <span class="label-icon">⚖️</span>
+                                    Weight (kg)
+                                </label>
+                                <input type="number" id="weight" placeholder="e.g., 65" required min="20" max="500"
+                                    oninput="calculateBMI()">
+                                <small class="input-hint">Your current weight in kilograms</small>
+                            </div>
+                        </div>
+
+                        <!-- BMI Display (Auto-calculated) -->
+                        <div id="bmiDisplay" class="bmi-card" style="display: none;">
+                            <div class="bmi-header">
+                                <span class="bmi-icon">📊</span>
+                                <span>Your BMI</span>
+                            </div>
+                            <div class="bmi-value" id="bmiValue">--</div>
+                            <div class="bmi-category" id="bmiCategory">Enter height & weight</div>
+                        </div>
+
+                        <!-- Menstruation Section (Hidden by default) -->
+                        <div id="menstruationSection" class="menstruation-card" style="display: none;">
+                            <div class="section-header">
+                                <div class="section-icon">💗</div>
+                                <div>
+                                    <h3>Menstruation Health</h3>
+                                    <p>Optional but helps us provide better insights</p>
+                                </div>
+                            </div>
+
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="cycleLength">Cycle Length (days)</label>
+                                    <input type="number" id="cycleLength" placeholder="e.g., 28" min="20" max="40">
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="periodDuration">Period Duration (days)</label>
+                                    <input type="number" id="periodDuration" placeholder="e.g., 5" min="1" max="10">
+                                </div>
+                            </div>
+
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="painLevel">Pain Level</label>
+                                    <select id="painLevel">
+                                        <option value="">Select pain level</option>
+                                        <option value="mild">Mild</option>
+                                        <option value="moderate">Moderate</option>
+                                        <option value="severe">Severe</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="flowType">Flow Type</label>
+                                    <select id="flowType">
+                                        <option value="">Select flow type</option>
+                                        <option value="light">Light</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="heavy">Heavy</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="checkbox-wrapper">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="irregularPeriods">
+                                    <span class="checkbox-custom"></span>
+                                    <span>I have irregular periods</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-next" onclick="nextStep(2)">
+                        Continue to Lifestyle
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+
+                <!-- Step 2: Lifestyle Habits -->
+                <div class="form-step" id="step2">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">🌿</div>
+                            <div>
+                                <h2>Lifestyle Habits</h2>
+                                <p>Your daily habits matter for your health</p>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="smokingHabit">
+                                    <span class="label-icon">🚬</span>
+                                    Smoking Habit
+                                </label>
+                                <select id="smokingHabit" required>
+                                    <option value="">Select smoking habit</option>
+                                    <option value="never">Never</option>
+                                    <option value="occasionally">Occasionally</option>
+                                    <option value="regular">Regular</option>
+                                    <option value="heavy">Heavy</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="alcoholConsumption">
+                                    <span class="label-icon">🍷</span>
+                                    Alcohol Consumption
+                                </label>
+                                <select id="alcoholConsumption" required>
+                                    <option value="">Select alcohol consumption</option>
+                                    <option value="never">Never</option>
+                                    <option value="occasionally">Occasionally</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="daily">Daily</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="sleepQuality">
+                                <span class="label-icon">😴</span>
+                                Sleep Quality
+                            </label>
+                            <select id="sleepQuality" required>
+                                <option value="">Select sleep quality</option>
+                                <option value="good">Good (7–8 hrs)</option>
+                                <option value="average">Average (5–6 hrs)</option>
+                                <option value="poor">Poor (&lt;5 hrs)</option>
+                                <option value="insomnia">Insomnia</option>
+                            </select>
+                            <small class="input-hint">Average hours of sleep per night</small>
+                        </div>
+                    </div>
+
+                    <div class="button-row">
+                        <button type="button" class="btn-back" onclick="prevStep(1)">
+                            <span class="btn-arrow">←</span>
+                            Back
+                        </button>
+                        <button type="button" class="btn-next" onclick="nextStep(3)">
+                            Continue to Medical
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Medical Information -->
+                <div class="form-step" id="step3">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">🏥</div>
+                            <div>
+                                <h2>Medical Information</h2>
+                                <p>Help us understand your health conditions</p>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="bloodType">
+                                    <span class="label-icon">🩸</span>
+                                    Blood Type
+                                </label>
+                                <select id="bloodType">
+                                    <option value="">Select blood type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="unknown">Don't Know</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="medicalCondition">
+                                    <span class="label-icon">💊</span>
+                                    Existing Medical Conditions
+                                </label>
+                                <select id="medicalCondition">
+                                    <option value="">Select if applicable</option>
+                                    <option value="none">None</option>
+                                    <option value="asthma">Asthma</option>
+                                    <option value="bp">High Blood Pressure</option>
+                                    <option value="diabetes">Diabetes</option>
+                                    <option value="heart">Heart Condition</option>
+                                    <option value="thyroid">Thyroid</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="allergies">
+                                <span class="label-icon">🤧</span>
+                                Allergies
+                            </label>
+                            <textarea id="allergies" rows="2"
+                                placeholder="e.g., Peanuts, Penicillin, Pollen (or type 'None')"></textarea>
+                            <small class="input-hint">List any known allergies separated by commas</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="currentMedications">
+                                <span class="label-icon">💉</span>
+                                Current Medications
+                            </label>
+                            <textarea id="currentMedications" rows="2"
+                                placeholder="e.g., Aspirin 100mg daily (or type 'None')"></textarea>
+                            <small class="input-hint">List medications you're currently taking</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="pastSurgeries">
+                                <span class="label-icon">🏥</span>
+                                Past Surgeries/Procedures
+                            </label>
+                            <textarea id="pastSurgeries" rows="2"
+                                placeholder="e.g., Appendectomy (2020) (or type 'None')"></textarea>
+                            <small class="input-hint">List any past surgeries or major procedures</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="familyHistory">
+                                <span class="label-icon">👨‍👩‍👧‍👦</span>
+                                Family Medical History
+                            </label>
+                            <textarea id="familyHistory" rows="2"
+                                placeholder="e.g., Father - Diabetes, Mother - Hypertension (or type 'None')"></textarea>
+                            <small class="input-hint">Significant medical conditions in immediate family</small>
+                        </div>
+
+                        <!-- Summary Card -->
+                        <div class="summary-card">
+                            <div class="summary-header">
+                                <span class="summary-icon">✨</span>
+                                <span>Profile Summary</span>
+                            </div>
+                            <div class="summary-content" id="summaryContent">
+                                <p style="color: #9ca3af; font-size: 14px;">Complete all steps to see your profile
+                                    summary</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-row">
+                        <button type="button" class="btn-back" onclick="prevStep(2)">
+                            <span class="btn-arrow">←</span>
+                            Back
+                        </button>
+                        <button type="button" class="btn-next" onclick="nextStep(4)">
+                            Continue to Avatar
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Avatar Selection -->
+                <div class="form-step" id="step4">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">🎨</div>
+                            <div>
+                                <h2>Choose Your Avatar</h2>
+                                <p>Select an avatar that represents you</p>
+                            </div>
+                        </div>
+
+                        <div class="avatar-grid">
+                            <!-- Avatar Options -->
+                            <div class="avatar-option" data-avatar="avatar1" onclick="selectAvatar('avatar1')">
+                                <div class="avatar-image">👨‍💼</div>
+                                <div class="avatar-name">Professional</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar2" onclick="selectAvatar('avatar2')">
+                                <div class="avatar-image">👩‍💼</div>
+                                <div class="avatar-name">Executive</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar3" onclick="selectAvatar('avatar3')">
+                                <div class="avatar-image">👨‍⚕️</div>
+                                <div class="avatar-name">Doctor</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar4" onclick="selectAvatar('avatar4')">
+                                <div class="avatar-image">👩‍⚕️</div>
+                                <div class="avatar-name">Nurse</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar5" onclick="selectAvatar('avatar5')">
+                                <div class="avatar-image">👨‍🎓</div>
+                                <div class="avatar-name">Student</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar6" onclick="selectAvatar('avatar6')">
+                                <div class="avatar-image">👩‍🎓</div>
+                                <div class="avatar-name">Scholar</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar7" onclick="selectAvatar('avatar7')">
+                                <div class="avatar-image">👨‍💻</div>
+                                <div class="avatar-name">Developer</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar8" onclick="selectAvatar('avatar8')">
+                                <div class="avatar-image">👩‍💻</div>
+                                <div class="avatar-name">Coder</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar9" onclick="selectAvatar('avatar9')">
+                                <div class="avatar-image">🧑‍🎨</div>
+                                <div class="avatar-name">Artist</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar10" onclick="selectAvatar('avatar10')">
+                                <div class="avatar-image">👨‍🍳</div>
+                                <div class="avatar-name">Chef</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar11" onclick="selectAvatar('avatar11')">
+                                <div class="avatar-image">👩‍🏫</div>
+                                <div class="avatar-name">Teacher</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar12" onclick="selectAvatar('avatar12')">
+                                <div class="avatar-image">🧑‍🚀</div>
+                                <div class="avatar-name">Astronaut</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar13" onclick="selectAvatar('avatar13')">
+                                <div class="avatar-image">👨‍🔬</div>
+                                <div class="avatar-name">Scientist</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar14" onclick="selectAvatar('avatar14')">
+                                <div class="avatar-image">👩‍🔬</div>
+                                <div class="avatar-name">Researcher</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar15" onclick="selectAvatar('avatar15')">
+                                <div class="avatar-image">🧑‍⚖️</div>
+                                <div class="avatar-name">Lawyer</div>
+                            </div>
+
+                            <div class="avatar-option" data-avatar="avatar16" onclick="selectAvatar('avatar16')">
+                                <div class="avatar-image">👨‍🏭</div>
+                                <div class="avatar-name">Engineer</div>
+                            </div>
+                        </div>
+
+                        <!-- Selected Avatar Preview -->
+                        <div class="avatar-preview" id="avatarPreview" style="display: none;">
+                            <div class="preview-header">
+                                <span class="preview-icon">✨</span>
+                                <span>Your Selected Avatar</span>
+                            </div>
+                            <div class="preview-avatar" id="previewAvatarImage">👤</div>
+                            <div class="preview-name" id="previewAvatarName">No avatar selected</div>
+                        </div>
+                    </div>
+
+                    <div class="button-row">
+                        <button type="button" class="btn-back" onclick="prevStep(3)">
+                            <span class="btn-arrow">←</span>
+                            Back
+                        </button>
+                        <button type="submit" class="btn-submit">
+                            Complete Profile
+                            <span class="btn-arrow">✓</span>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="health-details-custom.js"></script>
+</body>
+
+</html>

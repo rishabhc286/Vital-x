@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Vital-X</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="new-features.css">
+    <link rel="stylesheet" href="weather-widget.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="/backend/config/firebase-config.js"></script>
+    <script src="/backend/services/auth-service.js"></script>
+    <script src="/backend/services/user-service.js"></script>
+    <script src="/backend/services/health-data-service.js"></script>
+</head>
+
+<body data-page="dashboard">
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div id="sidebar-container"></div>
+        <script src="load-sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+            <!-- HEADER -->
+            <div class="dashboard-header">
+                <div>
+                    <h1 id="greetingText">Welcome back, Rishabh</h1>
+                    <p>Your health overview for today</p>
+                </div>
+                <div class="header-actions">
+                    <span class="pill">Today</span>
+                    <span class="bell">🔔</span>
+                </div>
+            </div>
+
+            <!-- TOP STATS -->
+            <div class="stats-grid">
+                <!-- Health Stability Score -->
+                <div class="card health-score-card">
+                    <h3 style="margin-bottom: 16px;">Health Stability Score</h3>
+                    <div class="score-circle">
+                        <div class="score-ring"></div>
+                        <div class="score-value">92</div>
+                    </div>
+                    <p class="score-label">Excellent • Lifestyle patterns stable</p>
+                </div>
+
+                <!-- Health Debt Score™ -->
+                <div class="card health-debt-card">
+                    <span class="icon">📊</span>
+                    <p>Health Debt Score™</p>
+                    <h3>12 <span>points</span></h3>
+                    <div class="trend down">▼ 5 from yesterday</div>
+                    <p class="debt-label">Daily: 12 • Weekly: 84</p>
+                </div>
+
+                <!-- Risk Trend Indicator -->
+                <div class="card risk-trend-card">
+                    <span class="icon">📈</span>
+                    <p>Risk Trend</p>
+                    <h3>Improving</h3>
+                    <div class="status-indicator improving">
+                        <span class="pulse-dot"></span>
+                        Positive trajectory
+                    </div>
+                </div>
+
+                <!-- Diet Balance Score -->
+                <div class="card stat-card">
+                    <span class="icon">🥗</span>
+                    <p>Diet Balance</p>
+                    <h3>85 <span>/ 100</span></h3>
+                    <div class="trend up">▲ Good</div>
+                </div>
+
+                <!-- Steps -->
+                <div class="card stat-card">
+                    <span class="icon">🚶</span>
+                    <p>Steps</p>
+                    <h3>8,432</h3>
+                    <div class="progress"><span style="width:84%"></span></div>
+                </div>
+
+                <!-- Calories -->
+                <div class="card stat-card">
+                    <span class="icon">🔥</span>
+                    <p>Calories</p>
+                    <h3>1,847</h3>
+                    <div class="progress"><span style="width:74%"></span></div>
+                </div>
+
+                <!-- Sleep -->
+                <div class="card stat-card">
+                    <span class="icon">🌙</span>
+                    <p>Sleep Quality</p>
+                    <h3>7.5 <span>hrs</span></h3>
+                    <div class="progress"><span style="width:90%"></span></div>
+                </div>
+
+                <!-- Stress Level -->
+                <div class="card stat-card">
+                    <span class="icon">🧠</span>
+                    <p>Stress Level</p>
+                    <h3>Low</h3>
+                    <div class="trend up">▼ 15%</div>
+                </div>
+            </div>
+
+            <!-- NEW FEATURES GRID -->
+            <div class="new-features-grid">
+                <!-- Live Date, Time & Weather Widget -->
+                <div class="card weather-card">
+                    <div class="weather-header">
+                        <h3>🌤️ Today's Overview</h3>
+                        <span class="weather-refresh" onclick="refreshWeather()" title="Refresh">🔄</span>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="datetime-section">
+                        <div class="current-time" id="currentTime">--:--</div>
+                        <div class="current-date" id="currentDate">Loading...</div>
+                    </div>
+
+                    <!-- Weather Content -->
+                    <div class="weather-content" id="weatherContent">
+                        <div class="weather-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading weather...</p>
+                        </div>
+                    </div>
+
+                    <!-- Weather Details (populated dynamically) -->
+                    <div class="weather-details" id="weatherDetails" style="display: none;">
+                        <div class="weather-item">
+                            <span>📍 Location</span>
+                            <strong id="weatherLocation">--</strong>
+                        </div>
+                        <div class="weather-item">
+                            <span>💧 Humidity</span>
+                            <strong id="weatherHumidity">--%</strong>
+                        </div>
+                        <div class="weather-item">
+                            <span>🌬️ Wind</span>
+                            <strong id="weatherWind">-- km/h</strong>
+                        </div>
+                        <div class="weather-item">
+                            <span>👁️ Visibility</span>
+                            <strong id="weatherVisibility">-- km</strong>
+                        </div>
+                    </div>
+
+                    <!-- Health Tip -->
+                    <p class="weather-tip" id="weatherTip">💡 Loading health recommendation...</p>
+                </div>
+
+                <!-- Hydration Tracker -->
+                <div class="card hydration-card">
+                    <h3>💧 Hydration Tracker</h3>
+                    <div class="hydration-content">
+                        <div class="water-glasses">
+                            <div class="glass filled" onclick="toggleGlass(this)">💧</div>
+                            <div class="glass filled" onclick="toggleGlass(this)">💧</div>
+                            <div class="glass filled" onclick="toggleGlass(this)">💧</div>
+                            <div class="glass filled" onclick="toggleGlass(this)">💧</div>
+                            <div class="glass filled" onclick="toggleGlass(this)">💧</div>
+                            <div class="glass" onclick="toggleGlass(this)">💧</div>
+                            <div class="glass" onclick="toggleGlass(this)">💧</div>
+                            <div class="glass" onclick="toggleGlass(this)">💧</div>
+                        </div>
+                        <p class="hydration-status">5 / 8 glasses (1.25L / 2L)</p>
+                        <div class="progress"><span style="width:62.5%"></span></div>
+                    </div>
+                </div>
+
+                <!-- Body Temperature -->
+                <div class="card stat-card temperature-card">
+                    <span class="icon">🌡️</span>
+                    <p>Body Temperature</p>
+                    <h3>36.8 <span>°C</span></h3>
+                    <div class="trend up">▲ Normal</div>
+                </div>
+
+                <!-- Health Streak -->
+                <div class="card streak-card">
+                    <h3>🔥 Health Streak</h3>
+                    <div class="streak-content">
+                        <div class="streak-number">14</div>
+                        <p>Days of consistent health tracking</p>
+                        <div class="streak-calendar">
+                            <span class="day active">M</span>
+                            <span class="day active">T</span>
+                            <span class="day active">W</span>
+                            <span class="day active">T</span>
+                            <span class="day active">F</span>
+                            <span class="day active">S</span>
+                            <span class="day active">S</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEDICATION TRACKER -->
+            <div class="medication-section">
+                <div class="card medication-card">
+                    <h3>💊 Today's Medications</h3>
+                    <div class="medication-list">
+                        <div class="medication-item completed">
+                            <input type="checkbox" checked id="med1">
+                            <label for="med1">
+                                <div class="med-info">
+                                    <strong>Vitamin D</strong>
+                                    <span>1000 IU • Morning</span>
+                                </div>
+                                <span class="med-time">8:00 AM ✓</span>
+                            </label>
+                        </div>
+                        <div class="medication-item">
+                            <input type="checkbox" id="med2">
+                            <label for="med2">
+                                <div class="med-info">
+                                    <strong>Omega-3</strong>
+                                    <span>1200 mg • Afternoon</span>
+                                </div>
+                                <span class="med-time">2:00 PM</span>
+                            </label>
+                        </div>
+                        <div class="medication-item">
+                            <input type="checkbox" id="med3">
+                            <label for="med3">
+                                <div class="med-info">
+                                    <strong>Multivitamin</strong>
+                                    <span>1 tablet • Evening</span>
+                                </div>
+                                <span class="med-time">8:00 PM</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button class="add-medication-btn">+ Add Medication</button>
+                </div>
+
+                <!-- Breathing Exercise -->
+                <div class="card breathing-card">
+                    <h3>🧘 Breathing Exercise</h3>
+                    <div class="breathing-content">
+                        <div class="breathing-circle" id="breathingCircle">
+                            <span id="breathingText">Breathe</span>
+                        </div>
+                        <button class="breathing-btn" id="breathingBtn" onclick="startBreathing()">Start
+                            Session</button>
+                        <p class="breathing-desc">4-7-8 Breathing Technique</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS -->
+            <div class="charts-grid">
+                <div class="card chart-card">
+                    <h3>Heart Rate Today</h3>
+                    <canvas id="heartChart"></canvas>
+                </div>
+
+                <div class="card chart-card">
+                    <h3>Weekly Steps</h3>
+                    <canvas id="stepsChart"></canvas>
+                </div>
+
+                <div class="card chart-card">
+                    <h3>Blood Pressure Trend</h3>
+                    <canvas id="bpChart"></canvas>
+                </div>
+
+                <div class="card chart-card">
+                    <h3>Sleep Quality</h3>
+                    <canvas id="sleepChart"></canvas>
+                </div>
+            </div>
+
+            <!-- EXERCISE & APPOINTMENTS -->
+            <div class="exercise-appointments-grid">
+                <!-- Exercise Recommendations -->
+                <div class="card exercise-card">
+                    <h3>💪 Recommended Exercises</h3>
+                    <div class="exercise-list">
+                        <div class="exercise-item">
+                            <div class="exercise-icon">🏃</div>
+                            <div class="exercise-info">
+                                <strong>Morning Jog</strong>
+                                <p>30 min • Cardio • 250 cal</p>
+                            </div>
+                            <button class="exercise-start-btn">Start</button>
+                        </div>
+                        <div class="exercise-item">
+                            <div class="exercise-icon">🧘</div>
+                            <div class="exercise-info">
+                                <strong>Yoga Session</strong>
+                                <p>20 min • Flexibility • 80 cal</p>
+                            </div>
+                            <button class="exercise-start-btn">Start</button>
+                        </div>
+                        <div class="exercise-item">
+                            <div class="exercise-icon">🏋️</div>
+                            <div class="exercise-info">
+                                <strong>Strength Training</strong>
+                                <p>45 min • Muscle • 300 cal</p>
+                            </div>
+                            <button class="exercise-start-btn">Start</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Appointments -->
+                <div class="card appointments-card">
+                    <h3>📅 Upcoming Appointments</h3>
+                    <div class="appointments-list">
+                        <div class="appointment-item">
+                            <div class="appointment-date">
+                                <div class="date-day">15</div>
+                                <div class="date-month">JAN</div>
+                            </div>
+                            <div class="appointment-info">
+                                <strong>Dr. Sarah Johnson</strong>
+                                <p>General Checkup • 10:00 AM</p>
+                            </div>
+                            <button class="appointment-btn">Remind</button>
+                        </div>
+                        <div class="appointment-item">
+                            <div class="appointment-date">
+                                <div class="date-day">22</div>
+                                <div class="date-month">JAN</div>
+                            </div>
+                            <div class="appointment-info">
+                                <strong>Dr. Michael Chen</strong>
+                                <p>Cardiology • 2:30 PM</p>
+                            </div>
+                            <button class="appointment-btn">Remind</button>
+                        </div>
+                    </div>
+                    <button class="add-appointment-btn">+ Schedule Appointment</button>
+                </div>
+            </div>
+
+            <!-- BMI & HEALTH TIPS -->
+            <div class="bmi-tips-grid">
+                <!-- BMI Calculator -->
+                <div class="card bmi-card">
+                    <h3>📏 BMI Calculator</h3>
+                    <div class="bmi-inputs">
+                        <div class="input-group">
+                            <label>Height (cm)</label>
+                            <input type="number" id="heightInput" placeholder="175" value="175">
+                        </div>
+                        <div class="input-group">
+                            <label>Weight (kg)</label>
+                            <input type="number" id="weightInput" placeholder="70" value="70">
+                        </div>
+                    </div>
+                    <button class="calculate-bmi-btn" onclick="calculateBMI()">Calculate BMI</button>
+                    <div class="bmi-result" id="bmiResult">
+                        <div class="bmi-value">22.9</div>
+                        <div class="bmi-status">Normal Weight</div>
+                        <div class="bmi-bar">
+                            <div class="bmi-indicator" style="left: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Health Tips -->
+                <div class="card health-tips-card">
+                    <h3>💡 Health Tip of the Day</h3>
+                    <div class="health-tip-content">
+                        <div class="tip-icon">🥗</div>
+                        <p class="tip-text">"Eating a balanced breakfast within an hour of waking up helps boost
+                            metabolism and maintain energy levels throughout the day."</p>
+                        <button class="next-tip-btn" onclick="nextTip()">Next Tip →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI INSIGHTS & QUICK ACTIONS -->
+            <div class="features-grid">
+                <!-- AI Insights -->
+                <div class="card ai-insights-card">
+                    <h3>🤖 AI Insights</h3>
+                    <div class="insight-item">
+                        <p>Your heart rate variability is improving. Keep up the good work!</p>
+                        <span class="time">2 hours ago</span>
+                    </div>
+                    <div class="insight-item">
+                        <p>Sleep quality has been consistent this week. Maintain your routine.</p>
+                        <span class="time">5 hours ago</span>
+                    </div>
+                    <div class="insight-item">
+                        <p>Activity levels are optimal. Consider adding light stretching.</p>
+                        <span class="time">Yesterday</span>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card feature-card">
+                    <div class="icon">⚡</div>
+                    <h4>Quick Actions</h4>
+                    <p style="margin-bottom: 12px;">Emergency Alert</p>
+                    <button
+                        style="width: 100%; padding: 10px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; margin-bottom: 8px;">🚨
+                        Emergency</button>
+                    <p style="margin-bottom: 12px;">Health Check</p>
+                    <button
+                        style="width: 100%; padding: 10px; background: linear-gradient(135deg, #2dd4bf, #22d3ee); border: none; border-radius: 10px; color: #020617; font-weight: 600; cursor: pointer;">📊
+                        Full Report</button>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Recent Activity</h3>
+                    <ul class="activity-timeline">
+                        <li class="activity-item">
+                            <div class="activity-icon">🚶</div>
+                            <div class="activity-content">
+                                <h4>Morning Walk</h4>
+                                <p>3,241 steps • 2.1 km</p>
+                            </div>
+                            <span class="activity-time">2h ago</span>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">💧</div>
+                            <div class="activity-content">
+                                <h4>Water Intake</h4>
+                                <p>500ml consumed</p>
+                            </div>
+                            <span class="activity-time">3h ago</span>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">🍎</div>
+                            <div class="activity-content">
+                                <h4>Meal Logged</h4>
+                                <p>Breakfast • 450 calories</p>
+                            </div>
+                            <span class="activity-time">4h ago</span>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">💊</div>
+                            <div class="activity-content">
+                                <h4>Medication Reminder</h4>
+                                <p>Vitamin D taken</p>
+                            </div>
+                            <span class="activity-time">6h ago</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- BOTTOM GRID -->
+            <div class="bottom-grid">
+                <div class="card">
+                    <h3>Sleep This Week</h3>
+                    <p>Average: <b class="accent">6.8 hrs</b></p>
+                    <p style="color: var(--muted); font-size: 13px; margin-top: 8px;">Consistent sleep pattern detected
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Weekly Summary</h3>
+                    <p>Steps: <span class="accent">58,432</span></p>
+                    <p>Calories: <span class="accent">12,847</span></p>
+                    <p style="color: var(--muted); font-size: 13px; margin-top: 8px;">Above weekly average</p>
+                </div>
+
+                <div class="card">
+                    <h3>Health Goals</h3>
+                    <p>Daily Steps: <span class="accent">84%</span> complete</p>
+                    <p>Water Intake: <span class="accent">72%</span> complete</p>
+                    <p style="color: var(--muted); font-size: 13px; margin-top: 8px;">Keep going! You're on track</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="load-sidebar.js"></script>
+    <script src="dashboard-realtime.js"></script>
+    <script src="new-features.js"></script>
+    <script src="weather-widget.js"></script>
+</body>
+
+</html>

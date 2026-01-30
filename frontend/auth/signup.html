@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Vital-X</title>
+    <link rel="stylesheet" href="auth.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- Backend Services -->
+    <script src="/backend/config/firebase-config.js"></script>
+    <script src="/backend/services/auth-service.js"></script>
+    <script src="/backend/services/user-service.js"></script>
+    <script src="/backend/utils/ui-helpers.js"></script>
+
+    <!-- UI Helper Styles -->
+    <link rel="stylesheet" href="/backend/utils/ui-helpers.css">
+</head>
+
+<body>
+    <a href="../index.html" class="back-to-landing">Back to Home</a>
+
+    <nav class="top-nav">
+        <a href="../index.html">Home</a>
+        <a href="login.html">Join</a>
+    </nav>
+
+    <div class="auth-split-wrapper">
+        <!-- Left Side - Form -->
+        <div class="auth-left">
+            <div class="auth-form-container">
+                <div class="auth-logo">
+                    <h1>⚡ Vital-X</h1>
+                </div>
+
+                <div class="auth-header">
+                    <span class="tag">Start for Free</span>
+                    <h2>Create new account<span class="dot">.</span></h2>
+                    <p>Already A Member? <a href="login.html">Log In</a></p>
+                </div>
+
+                <!-- Email/Password Form -->
+                <form id="emailForm">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="firstName">First name</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="firstName" placeholder="John" required autocomplete="given-name">
+                                <span class="input-icon">👤</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="lastName">Last name</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="lastName" placeholder="Doe" required autocomplete="family-name">
+                                <span class="input-icon">👤</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <div class="input-with-icon">
+                            <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+                            <span class="input-icon">✉️</span>
+                        </div>
+                    </div>
+
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="password-box">
+                            <input type="password" id="password" placeholder="Create a strong password" required
+                                autocomplete="new-password" oninput="validatePasswordStrength()">
+                            <span class="password-toggle" onclick="togglePassword('password')"></span>
+                        </div>
+                        <div id="passwordRequirements"
+                            style="margin-top: 12px; padding: 12px; background: rgba(17, 24, 39, 0.5); border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                            <div style="font-size: 12px; color: #9ca3af; margin-bottom: 8px; font-weight: 600;">Password
+                                must contain:</div>
+                            <div id="req-length" class="password-req">
+                                <span class="req-icon">○</span>
+                                <span>At least 6 characters</span>
+                            </div>
+                            <div id="req-uppercase" class="password-req">
+                                <span class="req-icon">○</span>
+                                <span>One uppercase letter (A-Z)</span>
+                            </div>
+                            <div id="req-lowercase" class="password-req">
+                                <span class="req-icon">○</span>
+                                <span>One lowercase letter (a-z)</span>
+                            </div>
+                            <div id="req-number" class="password-req">
+                                <span class="req-icon">○</span>
+                                <span>One number (0-9)</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="password-box">
+                            <input type="password" id="confirmPassword" placeholder="Re-enter your password" required
+                                autocomplete="new-password">
+                            <span class="password-toggle" onclick="togglePassword('confirmPassword')"></span>
+                        </div>
+                    </div>
+
+                    <div class="buttons-container">
+                        <button type="button" class="btn-secondary" onclick="toggleAuthMethod()">
+                            <span class="btn-icon">🔄</span>
+                            Use Social Login
+                        </button>
+                        <button type="submit" class="btn-primary">Create account →</button>
+                    </div>
+                </form>
+
+                <!-- Social Login Options (Hidden by default) -->
+                <div id="socialLogin" class="social-login-container" style="display: none;">
+                    <div class="social-buttons">
+                        <button class="social-btn google" onclick="loginWithGoogle()">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                            </svg>
+                            Continue with Google
+                        </button>
+
+                        <button class="social-btn github" onclick="loginWithGitHub()">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                            Continue with GitHub
+                        </button>
+
+                        <button class="social-btn apple" onclick="loginWithApple()">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path
+                                    d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                            </svg>
+                            Continue with Apple
+                        </button>
+
+                        <button class="social-btn microsoft" onclick="loginWithMicrosoft()">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="#f25022" d="M1 1h10v10H1z" />
+                                <path fill="#00a4ef" d="M13 1h10v10H13z" />
+                                <path fill="#7fba00" d="M1 13h10v10H1z" />
+                                <path fill="#ffb900" d="M13 13h10v10H13z" />
+                            </svg>
+                            Continue with Microsoft
+                        </button>
+                    </div>
+
+                    <div class="divider">or use email</div>
+
+                    <button type="button" class="btn-secondary btn-full" onclick="toggleAuthMethod()">
+                        <span class="btn-icon">✉️</span>
+                        Use Email & Password
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Background Image -->
+        <div class="auth-right">
+            <div class="auth-background"></div>
+            <div class="auth-right-logo">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#2dd4bf;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#22d3ee;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <g transform="translate(100, 50)">
+                        <!-- X shape -->
+                        <path d="M -30 0 L -10 0 L 30 80 L 10 80 Z" fill="url(#logoGradient)" />
+                        <path d="M 10 0 L 30 0 L -10 80 L -30 80 Z" fill="url(#logoGradient)" />
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const toggle = input.nextElementSibling;
+
+            if (input.type === "password") {
+                input.type = "text";
+                toggle.classList.add("show");
+            } else {
+                input.type = "password";
+                toggle.classList.remove("show");
+            }
+        }
+
+        function validatePasswordStrength() {
+            const password = document.getElementById('password').value;
+
+            // Check length
+            const lengthReq = document.getElementById('req-length');
+            if (password.length >= 6) {
+                lengthReq.classList.add('valid');
+                lengthReq.classList.remove('invalid');
+                lengthReq.querySelector('.req-icon').textContent = '✓';
+            } else {
+                lengthReq.classList.remove('valid');
+                lengthReq.classList.add('invalid');
+                lengthReq.querySelector('.req-icon').textContent = '○';
+            }
+
+            // Check uppercase
+            const uppercaseReq = document.getElementById('req-uppercase');
+            if (/[A-Z]/.test(password)) {
+                uppercaseReq.classList.add('valid');
+                uppercaseReq.classList.remove('invalid');
+                uppercaseReq.querySelector('.req-icon').textContent = '✓';
+            } else {
+                uppercaseReq.classList.remove('valid');
+                uppercaseReq.classList.add('invalid');
+                uppercaseReq.querySelector('.req-icon').textContent = '○';
+            }
+
+            // Check lowercase
+            const lowercaseReq = document.getElementById('req-lowercase');
+            if (/[a-z]/.test(password)) {
+                lowercaseReq.classList.add('valid');
+                lowercaseReq.classList.remove('invalid');
+                lowercaseReq.querySelector('.req-icon').textContent = '✓';
+            } else {
+                lowercaseReq.classList.remove('valid');
+                lowercaseReq.classList.add('invalid');
+                lowercaseReq.querySelector('.req-icon').textContent = '○';
+            }
+
+            // Check number
+            const numberReq = document.getElementById('req-number');
+            if (/[0-9]/.test(password)) {
+                numberReq.classList.add('valid');
+                numberReq.classList.remove('invalid');
+                numberReq.querySelector('.req-icon').textContent = '✓';
+            } else {
+                numberReq.classList.remove('valid');
+                numberReq.classList.add('invalid');
+                numberReq.querySelector('.req-icon').textContent = '○';
+            }
+        }
+
+
+        // Check if already authenticated (only once on page load)
+        (async function checkInitialAuth() {
+            const user = await AuthService.checkAuth();
+            if (user) {
+                // Check if profile is complete
+                const profileResult = await UserService.getUserProfile(user.uid);
+                if (profileResult.success && profileResult.data && profileResult.data.profileComplete) {
+                    window.location.href = '../dashboard/dashboard.html';
+                }
+            }
+        })();
+
+        // Add form submit event listener
+        document.getElementById('emailForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            await signupUser();
+        });
+
+        // Email/Password signup
+        async function signupUser() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitBtn = document.querySelector('.btn-primary');
+
+            // Validate inputs
+            if (!UIHelpers.validateEmail(email)) {
+                UIHelpers.showError('Please enter a valid email address');
+                return false;
+            }
+
+            if (password.length < 6) {
+                UIHelpers.showError('Password must be at least 6 characters');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                UIHelpers.showError('Passwords do not match');
+                return false;
+            }
+
+            const passwordValidation = UIHelpers.validatePassword(password);
+            if (!passwordValidation.isValid) {
+                UIHelpers.showError('Password must contain uppercase, lowercase, and numbers');
+                return false;
+            }
+
+            // Show loading state
+            UIHelpers.setButtonLoading(submitBtn, true, 'Creating account...');
+
+            try {
+                const result = await AuthService.signUp(email, password, {
+                    displayName: `${firstName} ${lastName}`,
+                    firstName: firstName,
+                    lastName: lastName
+                });
+
+                if (result.success) {
+                    UIHelpers.showSuccess('Account created successfully! Redirecting...');
+
+                    // Redirect to health details page
+                    setTimeout(() => {
+                        window.location.href = 'health-details.html';
+                    }, 1500);
+                } else {
+                    const errorMessage = UIHelpers.handleFirebaseError(result.error);
+                    UIHelpers.showError(errorMessage);
+                    UIHelpers.setButtonLoading(submitBtn, false);
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                UIHelpers.showError('An unexpected error occurred. Please try again.');
+                UIHelpers.setButtonLoading(submitBtn, false);
+            }
+
+            return false;
+        }
+
+        function toggleAuthMethod() {
+            const emailForm = document.getElementById('emailForm');
+            const socialLogin = document.getElementById('socialLogin');
+
+            if (emailForm.style.display === 'none') {
+                emailForm.style.display = 'block';
+                socialLogin.style.display = 'none';
+            } else {
+                emailForm.style.display = 'none';
+                socialLogin.style.display = 'block';
+            }
+        }
+
+        // Google Sign-Up
+        async function loginWithGoogle() {
+            try {
+                UIHelpers.showInfo('Signing up with Google...');
+
+                const result = await AuthService.signInWithGoogle();
+
+                if (result.success) {
+                    UIHelpers.showSuccess('Account created successfully! Redirecting...');
+
+                    setTimeout(() => {
+                        window.location.href = 'health-details.html';
+                    }, 1000);
+                } else {
+                    const errorMessage = UIHelpers.handleFirebaseError(result.error);
+                    UIHelpers.showError(errorMessage);
+                }
+            } catch (error) {
+                console.error('Google sign-up error:', error);
+                UIHelpers.showError('Failed to sign up with Google. Please try again.');
+            }
+        }
+
+        // Other social logins (coming soon)
+        function loginWithGitHub() {
+            UIHelpers.showInfo('GitHub sign-up coming soon!');
+        }
+
+        function loginWithApple() {
+            UIHelpers.showInfo('Apple sign-up coming soon!');
+        }
+
+        function loginWithMicrosoft() {
+            UIHelpers.showInfo('Microsoft sign-up coming soon!');
+        }
+    </script>
+</body>
+
+</html>
